@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { CircularRing } from './components/CircularRing';
 import { Settings } from './components/Settings';
-import { Presets } from './components/Presets';
 import { Icon } from './components/Icon';
 import { useTimer } from './hooks/useTimer';
 import { useSound } from './hooks/useSound';
@@ -69,17 +68,16 @@ function App() {
 
   const handleConfigChange = (newConfig: TimerConfig) => {
     setConfig(newConfig);
-    reset();
+    if (status.state !== 'running') {
+      reset();
+    }
   };
 
   const handleSettingsChange = (updates: Partial<SettingsType>) => {
     setSettings((prev) => ({ ...prev, ...updates }));
   };
 
-  const handleLoadPreset = (presetConfig: TimerConfig) => {
-    setConfig(presetConfig);
-    reset();
-  };
+  
 
   const handleSavePreset = (name: string) => {
     const newPreset: Preset = {
@@ -113,16 +111,16 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <Presets
-        presets={presets}
-        activeConfig={config}
-        onLoadPreset={handleLoadPreset}
-        onSavePreset={handleSavePreset}
-        onDeletePreset={handleDeletePreset}
-      />
-
+    <div className={`app ${status.state === 'completed' ? 'completed' : ''}`}>
       <main className="timer-display">
+        {status.state === 'completed' && (
+          <div className="completion-overlay">
+            <div className="completion-content">
+              <span className="completion-icon">✓</span>
+              <span className="completion-text">Workout Complete!</span>
+            </div>
+          </div>
+        )}
         <CircularRing
           remainingTime={status.remainingTime}
           totalTime={status.totalStepTime}
@@ -180,7 +178,14 @@ function App() {
       </div>
 
       {showSettings && (
-        <Settings config={config} onConfigChange={handleConfigChange} onClose={() => setShowSettings(false)} />
+        <Settings 
+          config={config} 
+          onConfigChange={handleConfigChange} 
+          presets={presets}
+          onSavePreset={handleSavePreset}
+          onDeletePreset={handleDeletePreset}
+          onClose={() => setShowSettings(false)} 
+        />
       )}
     </div>
   );

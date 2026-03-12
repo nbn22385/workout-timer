@@ -73,10 +73,16 @@ export async function playBoxingBell(): Promise<void> {
 export async function playEndBell(): Promise<void> {
   const ctx = await ensureAudioContext();
   
-  const frequencies = [523, 659, 784, 1047];
+  // Play a triumphant arpeggio (C-E-G-C)
+  const notes = [
+    { freq: 261.63, time: 0 },    // C4
+    { freq: 329.63, time: 0.15 }, // E4
+    { freq: 392.00, time: 0.3 },  // G4
+    { freq: 523.25, time: 0.45 }, // C5
+  ];
   const now = ctx.currentTime;
   
-  frequencies.forEach((freq, i) => {
+  notes.forEach(({ freq, time }) => {
     const oscillator = ctx.createOscillator();
     const gainNode = ctx.createGain();
     
@@ -84,14 +90,14 @@ export async function playEndBell(): Promise<void> {
     gainNode.connect(ctx.destination);
     
     oscillator.frequency.value = freq;
-    oscillator.type = 'sine';
+    oscillator.type = 'triangle';
     
-    const startTime = now + i * 0.15;
+    const startTime = now + time;
     gainNode.gain.setValueAtTime(0, startTime);
-    gainNode.gain.linearRampToValueAtTime(0.15, startTime + 0.02);
-    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.4);
+    gainNode.gain.linearRampToValueAtTime(0.2, startTime + 0.02);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, startTime + 0.5);
     
     oscillator.start(startTime);
-    oscillator.stop(startTime + 0.4);
+    oscillator.stop(startTime + 0.5);
   });
 }

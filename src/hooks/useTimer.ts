@@ -58,6 +58,7 @@ export function useTimer({
   const getCurrentStep = useCallback((): { name: string; type: StepType; duration: number } => {
     const cfg = configRef.current;
     const idx = currentStepIndexRef.current;
+    
     if (cfg.mode === 'simple') {
       const isResting = idx % 2 === 1;
       return {
@@ -70,10 +71,13 @@ export function useTimer({
         return { name: 'Done', type: 'other', duration: 0 };
       }
       const step = cfg.steps[idx];
+      if (!step) {
+        return { name: 'Step', type: 'other', duration: 0 };
+      }
       return {
-        name: step?.name || 'Step',
-        type: step?.type || 'other',
-        duration: step?.duration || 0,
+        name: step.name || 'Step',
+        type: step.type || 'other',
+        duration: step.duration || 0,
       };
     }
   }, []);
