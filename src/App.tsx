@@ -111,8 +111,8 @@ function App() {
   };
 
   return (
-    <div className={`app ${status.state === 'completed' ? 'completed' : ''}`}>
-      <main className="timer-display">
+    <div className="app">
+      <main className={`timer-display ${status.state === 'completed' ? 'completed' : ''}`}>
         {status.state === 'completed' && (
           <div className="completion-overlay">
             <div className="completion-content">

@@ -384,7 +384,11 @@ body {
 }
 
 /* Completion Animation */
-.completed .circular-ring {
+.timer-display.completed {
+  position: relative;
+}
+
+.timer-display.completed .circular-ring {
   animation: celebrate 0.6s ease-out;
 }
 
