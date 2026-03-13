@@ -306,7 +306,22 @@ export function Settings({
                 min="1"
                 max="300"
                 value={simpleConfig.interval}
-                onChange={(e) => handleSimpleChange({ interval: parseInt(e.target.value) || 30 })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '') {
+                    handleSimpleChange({ interval: '' as any });
+                  } else {
+                    const num = parseInt(value);
+                    if (!isNaN(num)) {
+                      handleSimpleChange({ interval: Math.max(1, Math.min(300, num)) });
+                    }
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '') {
+                    handleSimpleChange({ interval: 30 });
+                  }
+                }}
               />
             </div>
             <div className="form-group">
@@ -316,7 +331,22 @@ export function Settings({
                 min="1"
                 max="300"
                 value={simpleConfig.rest}
-                onChange={(e) => handleSimpleChange({ rest: parseInt(e.target.value) || 10 })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '') {
+                    handleSimpleChange({ rest: '' as any });
+                  } else {
+                    const num = parseInt(value);
+                    if (!isNaN(num)) {
+                      handleSimpleChange({ rest: Math.max(1, Math.min(300, num)) });
+                    }
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '') {
+                    handleSimpleChange({ rest: 10 });
+                  }
+                }}
               />
             </div>
             <div className="form-group">
@@ -326,7 +356,22 @@ export function Settings({
                 min="1"
                 max="99"
                 value={simpleConfig.rounds}
-                onChange={(e) => handleSimpleChange({ rounds: parseInt(e.target.value) || 8 })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '') {
+                    handleSimpleChange({ rounds: '' as any });
+                  } else {
+                    const num = parseInt(value);
+                    if (!isNaN(num)) {
+                      handleSimpleChange({ rounds: Math.max(1, Math.min(99, num)) });
+                    }
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '') {
+                    handleSimpleChange({ rounds: 8 });
+                  }
+                }}
               />
             </div>
           </div>
@@ -339,7 +384,22 @@ export function Settings({
                 min="1"
                 max="99"
                 value={customConfig.rounds}
-                onChange={(e) => handleCustomChange({ rounds: parseInt(e.target.value) || 1 })}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  if (value === '') {
+                    handleCustomChange({ rounds: '' as any });
+                  } else {
+                    const num = parseInt(value);
+                    if (!isNaN(num)) {
+                      handleCustomChange({ rounds: Math.max(1, Math.min(99, num)) });
+                    }
+                  }
+                }}
+                onBlur={(e) => {
+                  if (e.target.value === '') {
+                    handleCustomChange({ rounds: 1 });
+                  }
+                }}
               />
             </div>
             <div className="steps-list">
@@ -382,9 +442,21 @@ export function Settings({
                         max="5"
                         value={Math.floor(step.duration / 60)}
                         onChange={(e) => {
-                          const mins = parseInt(e.target.value) || 0;
-                          const seconds = step.duration % 60;
-                          updateStep(index, { duration: Math.max(0, Math.min(5, mins)) * 60 + seconds });
+                          const value = e.target.value;
+                          if (value === '') {
+                            updateStep(index, { duration: step.duration });
+                          } else {
+                            const mins = parseInt(value);
+                            if (!isNaN(mins)) {
+                              const seconds = step.duration % 60;
+                              updateStep(index, { duration: Math.max(0, Math.min(5, mins)) * 60 + seconds });
+                            }
+                          }
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value === '') {
+                            updateStep(index, { duration: step.duration });
+                          }
                         }}
                       />
                       <span>:</span>
@@ -394,9 +466,21 @@ export function Settings({
                         max="59"
                         value={step.duration % 60}
                         onChange={(e) => {
-                          const secs = parseInt(e.target.value) || 0;
-                          const mins = Math.floor(step.duration / 60);
-                          updateStep(index, { duration: mins * 60 + Math.max(0, Math.min(59, secs)) });
+                          const value = e.target.value;
+                          if (value === '') {
+                            updateStep(index, { duration: step.duration });
+                          } else {
+                            const secs = parseInt(value);
+                            if (!isNaN(secs)) {
+                              const mins = Math.floor(step.duration / 60);
+                              updateStep(index, { duration: mins * 60 + Math.max(0, Math.min(59, secs)) });
+                            }
+                          }
+                        }}
+                        onBlur={(e) => {
+                          if (e.target.value === '') {
+                            updateStep(index, { duration: step.duration });
+                          }
                         }}
                       />
                     </div>
