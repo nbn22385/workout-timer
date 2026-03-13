@@ -719,9 +719,14 @@ body {
   .toggle-area {
     flex-shrink: 0;
     padding: 0;
-    margin-right: 16px;
+    margin-left: 16px;
     display: flex;
     align-items: center;
+    order: -1;
+  }
+
+  .timer-area {
+    order: 0;
   }
 
   .side-toggles {
