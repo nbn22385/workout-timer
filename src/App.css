@@ -178,8 +178,14 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 4px;
   z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .ring-time {
@@ -206,7 +212,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin: 4px 0 12px 0;
+  margin: 0 0 12px 0;
 }
 
 .control-btn {
