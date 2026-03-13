@@ -299,6 +299,11 @@ body {
   border-color: var(--color-accent);
 }
 
+.toggle-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* Settings Presets Section */
 .settings-section {
   border-bottom: 1px solid var(--color-border);
