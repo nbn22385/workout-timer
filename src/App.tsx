@@ -45,6 +45,13 @@ function App() {
   // Wake lock is available only when supported AND in PWA mode
   const wakeLockAvailable = wakeLockSupported && isPwaMode;
 
+  // Reset wakeLock setting if not in PWA mode
+  useEffect(() => {
+    if (!isPwaMode && wakeLock) {
+      handleSettingsChange({ wakeLock: false });
+    }
+  }, [isPwaMode, wakeLock]);
+
   const handleCountdown = useCallback(
     (remainingTime: number) => {
       if (remainingTime <= 3 && remainingTime >= 1) {
@@ -190,10 +197,14 @@ function App() {
           </button>
         <button
           className={`toggle-btn ${wakeLock && wakeLockAvailable ? 'active' : ''}`}
-          disabled={!wakeLockAvailable}
           onClick={async () => {
             if (!isPwaMode) {
               showToast('Add app to home screen to enable wake lock', 'warning');
+              return;
+            }
+            
+            if (!wakeLockSupported) {
+              showToast('Wake lock not supported in this browser', 'warning');
               return;
             }
             
