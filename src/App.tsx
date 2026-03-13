@@ -35,6 +35,15 @@ function App() {
 
   const { requestWakeLock, releaseWakeLock, isSupported: wakeLockSupported } = useWakeLock(wakeLock);
   const { toasts, showToast, removeToast } = useToast();
+  
+  // Check if running in standalone PWA mode
+  const isPwaMode = typeof window !== 'undefined' && (
+    window.matchMedia('(display-mode: standalone)').matches ||
+    (window.navigator as any).standalone === true
+  );
+  
+  // Wake lock is available only when supported AND in PWA mode
+  const wakeLockAvailable = wakeLockSupported && isPwaMode;
 
   const handleCountdown = useCallback(
     (remainingTime: number) => {
@@ -180,14 +189,10 @@ function App() {
             <Icon name={settings.countdownBeep ? 'speaker' : 'speaker-off'} size={20} />
           </button>
         <button
-          className={`toggle-btn ${wakeLock ? 'active' : ''}`}
-          disabled={!wakeLockSupported}
+          className={`toggle-btn ${wakeLock && wakeLockAvailable ? 'active' : ''}`}
+          disabled={!wakeLockAvailable}
           onClick={async () => {
-            // Check if running as standalone PWA
-            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
-                                 (window.navigator as any).standalone === true;
-            
-            if (!isStandalone) {
+            if (!isPwaMode) {
               showToast('Add app to home screen to enable wake lock', 'warning');
               return;
             }
@@ -209,7 +214,7 @@ function App() {
             }
           }}
         >
-          <Icon name={wakeLock ? 'lock' : 'unlock'} size={20} />
+          <Icon name={wakeLock && wakeLockAvailable ? 'lock' : 'unlock'} size={20} />
         </button>
         </div>
       </div>
