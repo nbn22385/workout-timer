@@ -40,6 +40,7 @@ body {
 .app {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   height: 100vh;
   max-width: 480px;
   margin: 0 auto;
@@ -212,6 +213,7 @@ body {
 .controls {
   display: flex;
   justify-content: center;
+  align-items: center;
   gap: 16px;
   margin: 0;
   padding: 16px 0 12px 0;
