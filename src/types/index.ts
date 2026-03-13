@@ -1,3 +1,5 @@
+import type { ThemeId } from '../themes';
+
 export type StepType = 'work' | 'rest' | 'other';
 
 export interface SimpleConfig {
@@ -44,7 +46,7 @@ export interface TimerStatus {
 }
 
 export interface Settings {
-  theme: 'dark' | 'light';
+  theme: ThemeId;
   countdownBeep: boolean;
   endBeep: boolean;
   wakeLock: boolean;

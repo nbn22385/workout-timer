@@ -7,6 +7,7 @@ import { useSound } from './hooks/useSound';
 import { useWakeLock } from './hooks/useWakeLock';
 import type { TimerConfig, Settings as SettingsType, Preset } from './types';
 import { DEFAULT_SIMPLE_CONFIG } from './types';
+import { THEMES } from './themes';
 import {
   loadPresets,
   savePresets,
@@ -63,7 +64,22 @@ function App() {
 
   useEffect(() => {
     saveSettings(settings);
-    document.documentElement.setAttribute('data-theme', theme);
+    
+    // Inject theme colors as CSS variables
+    const selectedTheme = THEMES.find((t) => t.id === theme);
+    if (selectedTheme) {
+      const root = document.documentElement;
+      root.style.setProperty('--color-bg', selectedTheme.colors.bg);
+      root.style.setProperty('--color-card', selectedTheme.colors.card);
+      root.style.setProperty('--color-text', selectedTheme.colors.text);
+      root.style.setProperty('--color-text-muted', selectedTheme.colors.textMuted);
+      root.style.setProperty('--color-accent', selectedTheme.colors.accent);
+      root.style.setProperty('--color-work', selectedTheme.colors.work);
+      root.style.setProperty('--color-rest', selectedTheme.colors.rest);
+      root.style.setProperty('--color-other', selectedTheme.colors.other);
+      root.style.setProperty('--color-ring-track', selectedTheme.colors.ringTrack);
+      root.style.setProperty('--color-border', selectedTheme.colors.border);
+    }
   }, [settings, theme]);
 
   const handleConfigChange = (newConfig: TimerConfig) => {
@@ -158,12 +174,6 @@ function App() {
           <Icon name={settings.countdownBeep ? 'speaker' : 'speaker-off'} size={20} />
         </button>
         <button
-          className={`toggle-btn ${theme === 'dark' ? 'active' : ''}`}
-          onClick={() => handleSettingsChange({ theme: theme === 'dark' ? 'light' : 'dark' })}
-        >
-          <Icon name={theme === 'dark' ? 'moon' : 'sun'} size={20} />
-        </button>
-        <button
           className={`toggle-btn ${wakeLock ? 'active' : ''}`}
           onClick={() => handleSettingsChange({ wakeLock: !settings.wakeLock })}
         >
@@ -179,6 +189,8 @@ function App() {
           onSavePreset={handleSavePreset}
           onDeletePreset={handleDeletePreset}
           onClose={() => setShowSettings(false)} 
+          settings={settings}
+          onSettingsChange={handleSettingsChange}
         />
       )}
     </div>

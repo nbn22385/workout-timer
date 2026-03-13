@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import type { TimerConfig, SimpleConfig, CustomConfig, CustomStep, Preset } from '../types';
+import type { TimerConfig, SimpleConfig, CustomConfig, CustomStep, Preset, Settings as SettingsType } from '../types';
 import { DEFAULT_SIMPLE_CONFIG, DEFAULT_CUSTOM_CONFIG } from '../types';
 import { generateId } from '../utils/storage';
 import { Icon } from './Icon';
+import { THEMES, type ThemeId } from '../themes';
 
 interface SettingsProps {
   config: TimerConfig;
@@ -11,6 +12,8 @@ interface SettingsProps {
   onSavePreset: (name: string) => void;
   onDeletePreset: (id: string) => void;
   onClose: () => void;
+  settings: SettingsType;
+  onSettingsChange: (updates: Partial<SettingsType>) => void;
 }
 
 export function Settings({ 
@@ -19,7 +22,9 @@ export function Settings({
   presets,
   onSavePreset,
   onDeletePreset,
-  onClose 
+  onClose,
+  settings,
+  onSettingsChange
 }: SettingsProps) {
   const [mode, setMode] = useState<'simple' | 'custom'>(config.mode);
   const [simpleConfig, setSimpleConfig] = useState<SimpleConfig>(
@@ -122,6 +127,25 @@ export function Settings({
         <div className="settings-header">
           <h2>Settings</h2>
           <button className="close-btn" onClick={handleClose}>×</button>
+        </div>
+
+        {/* Theme Selector */}
+        <div className="settings-section">
+          <div className="settings-form">
+            <div className="form-group">
+              <label>Theme</label>
+              <select
+                value={settings.theme}
+                onChange={(e) => onSettingsChange({ theme: e.target.value as ThemeId })}
+              >
+                {THEMES.map((theme) => (
+                  <option key={theme.id} value={theme.id}>
+                    {theme.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
         </div>
 
         {/* Presets Section */}
