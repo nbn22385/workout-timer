@@ -37,6 +37,8 @@ export function Settings({
   const [newPresetName, setNewPresetName] = useState('');
   const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [touchStartY, setTouchStartY] = useState<number>(0);
+  const [touchDragOffset, setTouchDragOffset] = useState<number>(0);
 
   const handleClose = () => {
     if (mode === 'simple') {
@@ -119,6 +121,56 @@ export function Settings({
   const handleDragEnd = () => {
     setDraggedIndex(null);
     setDragOverIndex(null);
+  };
+
+  // Touch event handlers for mobile
+  const handleTouchStart = (e: React.TouchEvent, index: number) => {
+    // Only start drag if touching the drag handle area
+    const touch = e.touches[0];
+    const target = e.target as HTMLElement;
+    if (!target.classList.contains('drag-handle')) {
+      return;
+    }
+    
+    setDraggedIndex(index);
+    setTouchStartY(touch.clientY);
+    setTouchDragOffset(0);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (draggedIndex === null) return;
+    
+    e.preventDefault();
+    const touch = e.touches[0];
+    setTouchDragOffset(touch.clientY - touchStartY);
+    
+    // Find which item we're hovering over
+    const touchY = touch.clientY;
+    const stepsList = document.querySelector('.steps-list');
+    if (stepsList) {
+      const items = stepsList.querySelectorAll('.step-item');
+      items.forEach((item, index) => {
+        const rect = item.getBoundingClientRect();
+        if (touchY >= rect.top && touchY <= rect.bottom) {
+          setDragOverIndex(index);
+        }
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
+      setCustomConfig((prev) => {
+        const newSteps = [...prev.steps];
+        const [removed] = newSteps.splice(draggedIndex, 1);
+        newSteps.splice(dragOverIndex, 0, removed);
+        return { ...prev, steps: newSteps };
+      });
+    }
+    
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+    setTouchDragOffset(0);
   };
 
   const handleSavePreset = () => {
@@ -308,6 +360,10 @@ export function Settings({
                     onDragEnter={() => handleDragEnter(index)}
                     onDrop={(e) => handleDrop(e, index)}
                     onDragEnd={handleDragEnd}
+                    onTouchStart={(e) => handleTouchStart(e, index)}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                    style={{ transform: draggedIndex === index ? `translateY(${touchDragOffset}px)` : 'none' }}
                   >
                     ⋮⋮
                   </span>
