@@ -268,7 +268,7 @@ body {
   justify-content: center;
   align-items: center;
   padding: 12px 0 16px 0;
-  width: 100%;
+  flex: 0 0 auto;
 }
 
 .side-toggles {
@@ -695,7 +695,6 @@ body {
     align-items: center;
     justify-content: center;
     gap: 24px;
-    flex: 1;
   }
 
   .timer-display {
@@ -721,6 +720,8 @@ body {
     flex-shrink: 0;
     padding: 0;
     margin-right: 16px;
+    display: flex;
+    align-items: center;
   }
 
   .side-toggles {
