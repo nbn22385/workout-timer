@@ -165,22 +165,24 @@ function App() {
         </div>
       </div>
 
-      <div className="bottom-toggles">
-        <button className="toggle-btn" onClick={() => setShowSettings(true)}>
-          <Icon name="settings" size={20} />
-        </button>
-        <button
-          className={`toggle-btn ${settings.countdownBeep ? 'active' : ''}`}
-          onClick={() => handleSettingsChange({ countdownBeep: !settings.countdownBeep })}
-        >
-          <Icon name={settings.countdownBeep ? 'speaker' : 'speaker-off'} size={20} />
-        </button>
-        <button
-          className={`toggle-btn ${wakeLock ? 'active' : ''}`}
-          onClick={() => handleSettingsChange({ wakeLock: !settings.wakeLock })}
-        >
-          <Icon name={wakeLock ? 'lock' : 'unlock'} size={20} />
-        </button>
+      <div className="toggle-area">
+        <div className="side-toggles">
+          <button className="toggle-btn" onClick={() => setShowSettings(true)}>
+            <Icon name="settings" size={20} />
+          </button>
+          <button
+            className={`toggle-btn ${settings.countdownBeep ? 'active' : ''}`}
+            onClick={() => handleSettingsChange({ countdownBeep: !settings.countdownBeep })}
+          >
+            <Icon name={settings.countdownBeep ? 'speaker' : 'speaker-off'} size={20} />
+          </button>
+          <button
+            className={`toggle-btn ${wakeLock ? 'active' : ''}`}
+            onClick={() => handleSettingsChange({ wakeLock: !settings.wakeLock })}
+          >
+            <Icon name={wakeLock ? 'lock' : 'unlock'} size={20} />
+          </button>
+        </div>
       </div>
 
       {showSettings && (
