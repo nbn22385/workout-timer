@@ -563,7 +563,7 @@ body {
 }
 
 .settings-form {
-  padding: 24px;
+  padding: 24px 28px;
 }
 
 .form-group {
@@ -615,7 +615,7 @@ body {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 8px 16px;
   background: var(--color-bg);
   border-radius: 12px;
   transition: all 0.2s ease;
@@ -677,11 +677,11 @@ body {
 }
 
 .duration-selector input {
-  width: 32px;
-  min-width: 32px;
-  height: 28px;
-  padding: 2px 4px;
-  font-size: 12px;
+  width: 36px;
+  min-width: 36px;
+  height: 30px;
+  padding: 4px 6px;
+  font-size: 13px;
   text-align: center;
   background: var(--color-card);
   border: 1px solid var(--color-border);
@@ -692,11 +692,20 @@ body {
 .duration-selector span {
   color: var(--color-text-muted);
   font-weight: bold;
-  font-size: 14px;
+  font-size: 15px;
+  margin: 0 2px;
+}
+
+.step-fields select {
+  width: 65px;
+  min-width: 65px;
+  max-width: 65px;
+  padding: 4px;
+  font-size: 12px;
 }
 
 .step-fields select option {
-  font-size: 11px;
+  font-size: 12px;
 }
 
 .step-actions {
@@ -709,9 +718,10 @@ body {
   color: var(--color-text-muted);
   cursor: grab;
   font-size: 16px;
-  padding: 4px 6px;
+  padding: 4px 8px;
   user-select: none;
   flex-shrink: 0;
+  margin-right: 2px;
 }
 
 .drag-handle:active {
@@ -720,6 +730,7 @@ body {
 
 .step-item .drag-handle {
   order: -1;
+  margin-left: -8px;
 }
 
 .step-actions button {
