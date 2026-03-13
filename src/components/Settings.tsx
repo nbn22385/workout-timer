@@ -82,16 +82,6 @@ export function Settings({
     }));
   };
 
-  const moveStep = (index: number, direction: 'up' | 'down') => {
-    const newIndex = direction === 'up' ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= customConfig.steps.length) return;
-    setCustomConfig((prev) => {
-      const newSteps = [...prev.steps];
-      [newSteps[index], newSteps[newIndex]] = [newSteps[newIndex], newSteps[index]];
-      return { ...prev, steps: newSteps };
-    });
-  };
-
   const handleSavePreset = () => {
     if (newPresetName.trim()) {
       onSavePreset(newPresetName.trim());
@@ -278,12 +268,19 @@ export function Settings({
                       max="300"
                       value={step.duration}
                       onChange={(e) => {
+                        // Only update if value is not empty (will validate on blur)
+                        if (e.target.value !== '') {
+                          const num = parseInt(e.target.value);
+                          if (!isNaN(num)) {
+                            updateStep(index, { duration: Math.max(1, Math.min(300, num)) });
+                          }
+                        }
+                      }}
+                      onBlur={(e) => {
                         const val = e.target.value;
-                        if (val === '') {
-                          updateStep(index, { duration: 1 });
-                        } else {
-                          const num = parseInt(val);
-                          updateStep(index, { duration: isNaN(num) ? 1 : Math.max(1, Math.min(300, num)) });
+                        const num = parseInt(val);
+                        if (isNaN(num) || num < 1) {
+                          updateStep(index, { duration: 30 });
                         }
                       }}
                     />
@@ -297,8 +294,7 @@ export function Settings({
                     </select>
                   </div>
                   <div className="step-actions">
-                    <button onClick={() => moveStep(index, 'up')} disabled={index === 0}>↑</button>
-                    <button onClick={() => moveStep(index, 'down')} disabled={index === customConfig.steps.length - 1}>↓</button>
+                    <span className="drag-handle" title="Drag to reorder">⋮⋮</span>
                     <button onClick={() => removeStep(index)} className="delete">×</button>
                   </div>
                 </div>
