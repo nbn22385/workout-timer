@@ -205,8 +205,10 @@ body {
 .step-info {
   margin-top: 8px;
   margin-bottom: 16px;
-  font-size: 15px;
-  color: var(--color-text-muted);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--color-text);
+  letter-spacing: 0.5px;
 }
 
 .controls {
@@ -297,7 +299,7 @@ body {
   background: transparent;
   color: var(--color-accent);
   border-color: var(--color-accent);
-  border-width: 2px;
+  border-width: 1px;
 }
 
 .toggle-btn:disabled {
