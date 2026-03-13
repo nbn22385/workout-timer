@@ -7,6 +7,7 @@ interface CircularRingProps {
   stepName: string;
   size?: number;
   showCompletion?: boolean;
+  roundInfo?: string | null;
 }
 
 const STEP_COLORS: Record<StepType, string> = {
@@ -22,6 +23,7 @@ export function CircularRing({
   stepName,
   size = 280,
   showCompletion = false,
+  roundInfo = null,
 }: CircularRingProps) {
   const strokeWidth = 14;
   const radius = (size - strokeWidth) / 2;
@@ -75,6 +77,7 @@ export function CircularRing({
           </div>
         ) : (
           <>
+            {roundInfo && <span className="ring-round-info">{roundInfo}</span>}
             <span className="ring-time" style={{ color }}>{timeDisplay}</span>
             <span className="ring-label">{stepName}</span>
           </>

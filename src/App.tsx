@@ -145,6 +145,11 @@ function App() {
     }
   };
 
+  // Generate round info text for display inside the ring
+  const roundInfo = config.mode === 'simple' 
+    ? `${status.isResting ? 'Rest' : 'Round'} ${status.currentRound} / ${status.totalRounds}`
+    : `${status.stepType === 'rest' ? 'Rest' : 'Round'} ${status.currentRound}${status.totalRounds !== Infinity ? ` / ${status.totalRounds}` : ''}`;
+
   return (
     <div className="app">
       <div className="timer-area">
@@ -155,20 +160,8 @@ function App() {
             stepType={status.stepType}
             stepName={status.stepName}
             showCompletion={isCompleted}
+            roundInfo={roundInfo}
           />
-
-          {config.mode === 'simple' && (
-            <div className="round-info">
-              {status.isResting ? 'Rest' : 'Round'} {status.currentRound} / {status.totalRounds}
-            </div>
-          )}
-
-          {config.mode === 'custom' && (
-            <div className="round-info">
-              {status.stepType === 'rest' ? 'Rest' : 'Round'} {status.currentRound} 
-              {status.totalRounds !== Infinity && ` / ${status.totalRounds}`}
-            </div>
-          )}
         </main>
 
         <div className="controls">
