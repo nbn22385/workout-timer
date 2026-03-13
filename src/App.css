@@ -588,22 +588,6 @@ body {
   font-size: 16px;
 }
 
-.loop-toggle {
-  margin-bottom: 20px;
-}
-
-.loop-toggle label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-}
-
-.loop-toggle input {
-  width: 20px;
-  height: 20px;
-}
-
 .steps-list {
   display: flex;
   flex-direction: column;

@@ -50,9 +50,7 @@ export function useTimer({
     }
     const cfg = configRef.current;
     if (cfg.mode === 'custom') {
-      const workSteps = cfg.steps.filter(s => s.type === 'work').length;
-      // If looping, show infinity symbol or the actual count per loop
-      return cfg.loop ? Infinity : workSteps;
+      return cfg.rounds || 1;
     }
     return 1;
   }, []);
@@ -165,12 +163,14 @@ export function useTimer({
     
     const cfg = configRef.current;
     const currentIdx = currentStepIndexRef.current;
+    const currentRoundVal = currentRoundRef.current;
     const wasRunning = stateRef.current === 'running';
     
     clearTimerInterval();
     
     let shouldComplete = false;
     let nextIndex = currentIdx + 1;
+    let nextRound = currentRoundVal;
     let nextDuration = 0;
     
     if (cfg.mode === 'simple') {
@@ -180,14 +180,22 @@ export function useTimer({
       if (!shouldComplete) {
         const isResting = nextIndex % 2 === 1;
         nextDuration = isResting ? cfg.rest : cfg.interval;
+        nextRound = Math.floor(nextIndex / 2) + 1;
       }
     } else {
-      shouldComplete = nextIndex >= cfg.steps.length && !cfg.loop;
-      
-      if (!shouldComplete) {
-        if (cfg.loop && nextIndex >= cfg.steps.length) {
+      // Check if we've reached the end of steps
+      if (nextIndex >= cfg.steps.length) {
+        // Move to next round
+        nextRound = currentRoundVal + 1;
+        // Check if we've completed all rounds
+        if (nextRound > cfg.rounds) {
+          shouldComplete = true;
+        } else {
+          // Start from first step of new round
           nextIndex = 0;
+          nextDuration = cfg.steps[0]?.duration || 0;
         }
+      } else {
         nextDuration = cfg.steps[nextIndex]?.duration || 0;
       }
     }
@@ -199,18 +207,8 @@ export function useTimer({
       return;
     }
     
-    let nextRound = 1;
-    if (cfg.mode === 'simple') {
-      nextRound = Math.floor(nextIndex / 2) + 1;
-    } else {
-      const currentStep = cfg.steps[currentIdx];
-      if (currentStep?.type === 'rest') {
-        currentRoundRef.current += 1;
-      }
-      nextRound = currentRoundRef.current;
-    }
-    
     currentStepIndexRef.current = nextIndex;
+    currentRoundRef.current = nextRound;
     setCurrentStepIndex(nextIndex);
     setCurrentRound(nextRound);
     

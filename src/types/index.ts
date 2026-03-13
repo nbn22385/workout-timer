@@ -20,7 +20,7 @@ export interface CustomStep {
 export interface CustomConfig {
   mode: 'custom';
   steps: CustomStep[];
-  loop: boolean;
+  rounds: number;
 }
 
 export type TimerConfig = SimpleConfig | CustomConfig;
@@ -66,7 +66,7 @@ export const DEFAULT_CUSTOM_CONFIG: CustomConfig = {
     { id: '1', name: 'Work', duration: 30, type: 'work' },
     { id: '2', name: 'Rest', duration: 10, type: 'rest' },
   ],
-  loop: false,
+  rounds: 1,
 };
 
 export const DEFAULT_SETTINGS: Settings = {

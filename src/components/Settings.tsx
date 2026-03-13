@@ -332,15 +332,15 @@ export function Settings({
           </div>
         ) : (
           <div className="settings-form custom-mode">
-            <div className="loop-toggle">
-              <label>
-                <input
-                  type="checkbox"
-                  checked={customConfig.loop}
-                  onChange={(e) => handleCustomChange({ loop: e.target.checked })}
-                />
-                Loop sequence
-              </label>
+            <div className="form-group">
+              <label>Number of Rounds</label>
+              <input
+                type="number"
+                min="1"
+                max="99"
+                value={customConfig.rounds}
+                onChange={(e) => handleCustomChange({ rounds: parseInt(e.target.value) || 1 })}
+              />
             </div>
             <div className="steps-list">
               {customConfig.steps.map((step, index) => (
