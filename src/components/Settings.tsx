@@ -375,28 +375,31 @@ export function Settings({
                       onChange={(e) => updateStep(index, { name: e.target.value })}
                       placeholder="Step name"
                     />
-                    <input
-                      type="number"
-                      min="1"
-                      max="300"
-                      value={step.duration}
-                      onChange={(e) => {
-                        // Only update if value is not empty (will validate on blur)
-                        if (e.target.value !== '') {
-                          const num = parseInt(e.target.value);
-                          if (!isNaN(num)) {
-                            updateStep(index, { duration: Math.max(1, Math.min(300, num)) });
-                          }
-                        }
-                      }}
-                      onBlur={(e) => {
-                        const val = e.target.value;
-                        const num = parseInt(val);
-                        if (isNaN(num) || num < 1) {
-                          updateStep(index, { duration: 30 });
-                        }
-                      }}
-                    />
+                    <div className="duration-selector">
+                      <input
+                        type="number"
+                        min="0"
+                        max="5"
+                        value={Math.floor(step.duration / 60)}
+                        onChange={(e) => {
+                          const mins = parseInt(e.target.value) || 0;
+                          const seconds = step.duration % 60;
+                          updateStep(index, { duration: Math.max(0, Math.min(5, mins)) * 60 + seconds });
+                        }}
+                      />
+                      <span>:</span>
+                      <input
+                        type="number"
+                        min="0"
+                        max="59"
+                        value={step.duration % 60}
+                        onChange={(e) => {
+                          const secs = parseInt(e.target.value) || 0;
+                          const mins = Math.floor(step.duration / 60);
+                          updateStep(index, { duration: mins * 60 + Math.max(0, Math.min(59, secs)) });
+                        }}
+                      />
+                    </div>
                     <select
                       value={step.type}
                       onChange={(e) => updateStep(index, { type: e.target.value as CustomStep['type'] })}
