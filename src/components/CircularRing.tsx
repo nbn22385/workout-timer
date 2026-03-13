@@ -13,7 +13,6 @@ interface CircularRingProps {
 const STEP_COLORS: Record<StepType, string> = {
   work: 'var(--color-work)',
   rest: 'var(--color-rest)',
-  other: 'var(--color-other)',
 };
 
 export function CircularRing({

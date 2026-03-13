@@ -95,7 +95,6 @@ function App() {
       root.style.setProperty('--color-accent', selectedTheme.colors.accent);
       root.style.setProperty('--color-work', selectedTheme.colors.work);
       root.style.setProperty('--color-rest', selectedTheme.colors.rest);
-      root.style.setProperty('--color-other', selectedTheme.colors.other);
       root.style.setProperty('--color-ring-track', selectedTheme.colors.ringTrack);
       root.style.setProperty('--color-border', selectedTheme.colors.border);
     }

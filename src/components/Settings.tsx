@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { TimerConfig, SimpleConfig, CustomConfig, CustomStep, Preset, Settings as SettingsType } from '../types';
+import type { TimerConfig, SimpleConfig, CustomConfig, CustomStep, StepType, Preset, Settings as SettingsType } from '../types';
 import { DEFAULT_SIMPLE_CONFIG, DEFAULT_CUSTOM_CONFIG } from '../types';
 import { generateId } from '../utils/storage';
 import { Icon } from './Icon';
@@ -484,14 +484,36 @@ export function Settings({
                         }}
                       />
                     </div>
-                    <select
-                      value={step.type}
-                      onChange={(e) => updateStep(index, { type: e.target.value as CustomStep['type'] })}
-                    >
-                      <option value="work">Work</option>
-                      <option value="rest">Rest</option>
-                      <option value="other">Other</option>
-                    </select>
+                    <div className="work-rest-toggle">
+                      <button
+                        type="button"
+                        className={step.type === 'work' ? 'active' : ''}
+                        onClick={() => {
+                          const newType: StepType = 'work';
+                          let newName = step.name;
+                          if (newName.toLowerCase() === 'rest') {
+                            newName = 'Work';
+                          }
+                          updateStep(index, { type: newType, name: newName });
+                        }}
+                      >
+                        Work
+                      </button>
+                      <button
+                        type="button"
+                        className={step.type === 'rest' ? 'active' : ''}
+                        onClick={() => {
+                          const newType: StepType = 'rest';
+                          let newName = step.name;
+                          if (newName.toLowerCase() === 'work') {
+                            newName = 'Rest';
+                          }
+                          updateStep(index, { type: newType, name: newName });
+                        }}
+                      >
+                        Rest
+                      </button>
+                    </div>
                   </div>
                   <div className="step-actions">
                     <button onClick={() => removeStep(index)} className="delete">×</button>

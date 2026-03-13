@@ -68,15 +68,15 @@ export function useTimer({
       };
     } else {
       if (idx >= cfg.steps.length) {
-        return { name: 'Done', type: 'other', duration: 0 };
+        return { name: 'Done', type: 'work' as const, duration: 0 };
       }
       const step = cfg.steps[idx];
       if (!step) {
-        return { name: 'Step', type: 'other', duration: 0 };
+        return { name: 'Step', type: 'work' as const, duration: 0 };
       }
       return {
         name: step.name || 'Step',
-        type: step.type || 'other',
+        type: step.type || 'work' as const,
         duration: step.duration || 0,
       };
     }
@@ -102,7 +102,7 @@ export function useTimer({
         totalRounds: getTotalRounds(),
         currentStepIndex,
         stepName: 'Done',
-        stepType: 'other',
+        stepType: 'work' as const,
         remainingTime: 0,
         totalStepTime: 1,
         isResting: false,

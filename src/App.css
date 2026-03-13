@@ -681,14 +681,38 @@ body {
   margin: 0 2px;
 }
 
-.step-fields select {
-  width: 65px;
-  min-width: 65px;
-  max-width: 65px;
-  padding: 4px;
-  font-size: 12px;
-  z-index: 10;
-  position: relative;
+.work-rest-toggle {
+  display: flex;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.work-rest-toggle button {
+  width: 32px;
+  min-width: 32px;
+  padding: 2px 4px;
+  font-size: 11px;
+  border: 1px solid var(--color-border);
+  background: var(--color-card);
+  color: var(--color-text);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.work-rest-toggle button:first-child {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.work-rest-toggle button:last-child {
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.work-rest-toggle button.active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
 }
 
 .step-fields select option {
@@ -736,6 +760,8 @@ body {
 }
 
 .step-actions button.delete {
+  width: 24px;
+  height: 24px;
   background: var(--color-accent);
   color: white;
 }

@@ -1,6 +1,6 @@
 import type { ThemeId } from '../themes';
 
-export type StepType = 'work' | 'rest' | 'other';
+export type StepType = 'work' | 'rest';
 
 export interface SimpleConfig {
   mode: 'simple';
