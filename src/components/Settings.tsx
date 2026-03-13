@@ -277,7 +277,15 @@ export function Settings({
                       min="1"
                       max="300"
                       value={step.duration}
-                      onChange={(e) => updateStep(index, { duration: parseInt(e.target.value) || 30 })}
+                      onChange={(e) => {
+                        const val = e.target.value;
+                        if (val === '') {
+                          updateStep(index, { duration: 1 });
+                        } else {
+                          const num = parseInt(val);
+                          updateStep(index, { duration: isNaN(num) ? 1 : Math.max(1, Math.min(300, num)) });
+                        }
+                      }}
                     />
                     <select
                       value={step.type}

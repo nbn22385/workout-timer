@@ -637,6 +637,8 @@ body {
   flex: 1;
   display: flex;
   gap: 8px;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .step-fields input[type="text"] {
@@ -648,7 +650,11 @@ body {
 }
 
 .step-fields select {
-  width: 80px;
+  min-width: 70px;
+  max-width: 80px;
+  flex-shrink: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .step-actions {
