@@ -197,8 +197,8 @@ body {
 
 .round-info,
 .step-info {
-  margin-top: 16px;
-  font-size: 16px;
+  margin-top: 12px;
+  font-size: 15px;
   color: var(--color-text-muted);
 }
 
@@ -206,7 +206,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 16px;
-  margin: 16px 0;
+  margin: 4px 0 12px 0;
 }
 
 .control-btn {
@@ -250,7 +250,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 12px;
-  padding: 12px 0;
+  padding: 12px 0 16px 0;
 }
 
 .toggle-btn {
@@ -309,6 +309,7 @@ body {
 
 .preset-load-btn {
   flex: 1;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -320,6 +321,14 @@ body {
   text-align: left;
   cursor: pointer;
   font-size: 14px;
+  overflow: hidden;
+}
+
+.preset-load-btn span:first-child {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .preset-load-btn:hover {

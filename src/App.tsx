@@ -136,7 +136,8 @@ function App() {
 
         {config.mode === 'custom' && (
           <div className="round-info">
-            {status.stepType === 'rest' ? 'Rest' : 'Round'} {status.currentRound} / {status.totalRounds}
+            {status.stepType === 'rest' ? 'Rest' : 'Round'} {status.currentRound} 
+            {status.totalRounds !== Infinity && ` / ${status.totalRounds}`}
           </div>
         )}
       </main>

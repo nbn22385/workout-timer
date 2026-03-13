@@ -64,7 +64,7 @@ export const DEFAULT_CUSTOM_CONFIG: CustomConfig = {
     { id: '1', name: 'Work', duration: 30, type: 'work' },
     { id: '2', name: 'Rest', duration: 10, type: 'rest' },
   ],
-  loop: true,
+  loop: false,
 };
 
 export const DEFAULT_SETTINGS: Settings = {

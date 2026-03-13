@@ -21,7 +21,7 @@ export function CircularRing({
   stepName,
   size = 280,
 }: CircularRingProps) {
-  const strokeWidth = 12;
+  const strokeWidth = 14;
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const progress = totalTime > 0 ? remainingTime / totalTime : 0;

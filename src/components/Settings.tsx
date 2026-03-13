@@ -139,7 +139,7 @@ export function Settings({
                       className="preset-load-btn"
                       onClick={() => handleLoadPreset(preset)}
                     >
-                      {preset.name}
+                      <span>{preset.name}</span>
                       <Icon name="check" size={14} className="check-icon" />
                     </button>
                     <button

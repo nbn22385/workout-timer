@@ -50,7 +50,9 @@ export function useTimer({
     }
     const cfg = configRef.current;
     if (cfg.mode === 'custom') {
-      return cfg.steps.filter(s => s.type === 'work').length;
+      const workSteps = cfg.steps.filter(s => s.type === 'work').length;
+      // If looping, show infinity symbol or the actual count per loop
+      return cfg.loop ? Infinity : workSteps;
     }
     return 1;
   }, []);
@@ -92,6 +94,20 @@ export function useTimer({
 
   const getTimerStatus = useCallback((): TimerStatus => {
     const step = getCurrentStep();
+    // When state is 'completed', show the completed state properly
+    if (stateRef.current === 'completed') {
+      return {
+        state: 'completed',
+        currentRound,
+        totalRounds: getTotalRounds(),
+        currentStepIndex,
+        stepName: 'Done',
+        stepType: 'other',
+        remainingTime: 0,
+        totalStepTime: 1,
+        isResting: false,
+      };
+    }
     return {
       state: stateRef.current,
       currentRound,
@@ -103,7 +119,7 @@ export function useTimer({
       totalStepTime,
       isResting: step.type === 'rest',
     };
-  }, [currentRound, getTotalRounds, currentStepIndex, getCurrentStep, remainingTime, totalStepTime]);
+  }, [currentRound, getTotalRounds, currentStepIndex, getCurrentStep, remainingTime, totalStepTime, state]);
 
   const clearTimerInterval = useCallback(() => {
     if (intervalRef.current) {
