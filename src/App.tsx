@@ -113,19 +113,12 @@ function App() {
   return (
     <div className="app">
       <main className={`timer-display ${status.state === 'completed' ? 'completed' : ''}`}>
-        {status.state === 'completed' && (
-          <div className="completion-overlay">
-            <div className="completion-content">
-              <span className="completion-icon">✓</span>
-              <span className="completion-text">Workout Complete!</span>
-            </div>
-          </div>
-        )}
         <CircularRing
           remainingTime={status.remainingTime}
           totalTime={status.totalStepTime}
           stepType={status.stepType}
           stepName={status.stepName}
+          showCompletion={status.state === 'completed'}
         />
 
         {config.mode === 'simple' && (

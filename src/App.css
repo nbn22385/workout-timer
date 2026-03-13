@@ -401,42 +401,24 @@ body {
   animation: celebrate 0.6s ease-out;
 }
 
-.completion-overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 10;
-}
-
-.completion-content {
+.completion-center {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: 4px;
   animation: fadeInUp 0.5s ease-out;
 }
 
-.completion-icon {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  background: var(--color-rest);
-  color: white;
-  font-size: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.completion-check {
+  font-size: 64px;
+  font-weight: bold;
+  color: var(--color-rest);
   animation: pulse 1s ease-in-out infinite;
 }
 
-.completion-text {
-  color: white;
-  font-size: 24px;
-  font-weight: 600;
+.completion-label {
+  font-size: 14px;
+  color: var(--color-text-muted);
   text-transform: uppercase;
   letter-spacing: 2px;
 }
@@ -450,11 +432,11 @@ body {
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: scale(0.8);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: scale(1);
   }
 }
 
