@@ -35,6 +35,8 @@ export function Settings({
   );
   const [showPresets, setShowPresets] = useState(false);
   const [newPresetName, setNewPresetName] = useState('');
+  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const handleClose = () => {
     if (mode === 'simple') {
@@ -80,6 +82,43 @@ export function Settings({
       ...prev,
       steps: prev.steps.filter((_, i) => i !== index),
     }));
+  };
+
+  const handleDragStart = (index: number) => {
+    setDraggedIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, index: number) => {
+    e.preventDefault();
+    setDragOverIndex(index);
+  };
+
+  const handleDragEnter = (index: number) => {
+    setDragOverIndex(index);
+  };
+
+  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
+    e.preventDefault();
+    if (draggedIndex === null || draggedIndex === dropIndex) {
+      setDraggedIndex(null);
+      setDragOverIndex(null);
+      return;
+    }
+
+    setCustomConfig((prev) => {
+      const newSteps = [...prev.steps];
+      const [removed] = newSteps.splice(draggedIndex, 1);
+      newSteps.splice(dropIndex, 0, removed);
+      return { ...prev, steps: newSteps };
+    });
+
+    setDraggedIndex(null);
+    setDragOverIndex(null);
+  };
+
+  const handleDragEnd = () => {
+    setDraggedIndex(null);
+    setDragOverIndex(null);
   };
 
   const handleSavePreset = () => {
@@ -253,7 +292,16 @@ export function Settings({
             </div>
             <div className="steps-list">
               {customConfig.steps.map((step, index) => (
-                <div key={step.id} className="step-item">
+                <div
+                  key={step.id}
+                  className={`step-item ${dragOverIndex === index ? 'drag-over' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
+                  draggable
+                  onDragStart={() => handleDragStart(index)}
+                  onDragOver={(e) => handleDragOver(e, index)}
+                  onDragEnter={() => handleDragEnter(index)}
+                  onDrop={(e) => handleDrop(e, index)}
+                  onDragEnd={handleDragEnd}
+                >
                   <span className="step-number">{index + 1}</span>
                   <div className="step-fields">
                     <input
@@ -294,8 +342,8 @@ export function Settings({
                     </select>
                   </div>
                   <div className="step-actions">
-                    <span className="drag-handle" title="Drag to reorder">⋮⋮</span>
                     <button onClick={() => removeStep(index)} className="delete">×</button>
+                    <span className="drag-handle" title="Drag to reorder" draggable>⋮⋮</span>
                   </div>
                 </div>
               ))}

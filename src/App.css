@@ -618,6 +618,17 @@ body {
   padding: 8px 12px;
   background: var(--color-bg);
   border-radius: 12px;
+  transition: all 0.2s ease;
+}
+
+.step-item.dragging {
+  opacity: 0.5;
+  transform: scale(0.98);
+}
+
+.step-item.drag-over {
+  background: var(--color-card);
+  border: 1px dashed var(--color-accent);
 }
 
 .step-number {
