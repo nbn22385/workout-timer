@@ -267,7 +267,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 12px 0 16px 0;
+  padding: 16px 0 20px 0;
   flex: 0 0 auto;
 }
 
@@ -294,9 +294,10 @@ body {
 }
 
 .toggle-btn.active {
-  background: var(--color-accent);
-  color: white;
+  background: transparent;
+  color: var(--color-accent);
   border-color: var(--color-accent);
+  border-width: 2px;
 }
 
 .toggle-btn:disabled {
