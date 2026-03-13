@@ -5,56 +5,59 @@ export function useWakeLock(enabled: boolean) {
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
 
   const requestWakeLock = useCallback(async () => {
-    if (!enabled) return;
-    
     try {
       if ('wakeLock' in navigator) {
+        // Release existing wake lock if any
+        if (wakeLockRef.current) {
+          try {
+            await wakeLockRef.current.release();
+          } catch (e) {
+            // Ignore release errors
+          }
+        }
+        
         const wakeLock = await navigator.wakeLock.request('screen');
         wakeLockRef.current = wakeLock;
         setIsActive(true);
         
         wakeLock.addEventListener('release', () => {
           setIsActive(false);
+          wakeLockRef.current = null;
         });
       }
     } catch (err) {
       console.error('Wake lock error:', err);
       setIsActive(false);
     }
-  }, [enabled]);
+  }, []);
 
   const releaseWakeLock = useCallback(async () => {
     if (wakeLockRef.current) {
-      await wakeLockRef.current.release();
+      try {
+        await wakeLockRef.current.release();
+      } catch (e) {
+        // Ignore release errors
+      }
       wakeLockRef.current = null;
-      setIsActive(false);
     }
+    setIsActive(false);
   }, []);
 
+  // Handle visibility changes - re-request wake lock when page becomes visible
   useEffect(() => {
-    if (enabled) {
-      requestWakeLock();
-    } else {
-      releaseWakeLock();
-    }
-
-    return () => {
-      releaseWakeLock();
-    };
-  }, [enabled, requestWakeLock, releaseWakeLock]);
-
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && enabled && !isActive) {
-        requestWakeLock();
+    const handleVisibilityChange = async () => {
+      if (document.visibilityState === 'visible' && enabled && wakeLockRef.current) {
+        // Re-request wake lock if we lost it
+        await requestWakeLock();
       }
     };
 
     document.addEventListener('visibilitychange', handleVisibilityChange);
+    
     return () => {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [enabled, isActive, requestWakeLock]);
+  }, [enabled, requestWakeLock]);
 
   return { isActive, requestWakeLock, releaseWakeLock };
 }

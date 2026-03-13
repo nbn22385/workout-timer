@@ -31,7 +31,7 @@ function App() {
     endBeep,
   });
 
-  useWakeLock(wakeLock);
+  const { requestWakeLock, releaseWakeLock } = useWakeLock(wakeLock);
 
   const handleCountdown = useCallback(
     (remainingTime: number) => {
@@ -178,7 +178,15 @@ function App() {
           </button>
           <button
             className={`toggle-btn ${wakeLock ? 'active' : ''}`}
-            onClick={() => handleSettingsChange({ wakeLock: !settings.wakeLock })}
+            onClick={async () => {
+              const newWakeLock = !settings.wakeLock;
+              handleSettingsChange({ wakeLock: newWakeLock });
+              if (newWakeLock) {
+                await requestWakeLock();
+              } else {
+                await releaseWakeLock();
+              }
+            }}
           >
             <Icon name={wakeLock ? 'lock' : 'unlock'} size={20} />
           </button>
