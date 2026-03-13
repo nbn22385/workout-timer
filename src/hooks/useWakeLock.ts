@@ -3,33 +3,37 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 export function useWakeLock(enabled: boolean) {
   const [isActive, setIsActive] = useState(false);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
+  const isSupported = 'wakeLock' in navigator;
 
   const requestWakeLock = useCallback(async () => {
+    if (!isSupported) {
+      throw new Error('Wake Lock API not supported');
+    }
+    
     try {
-      if ('wakeLock' in navigator) {
-        // Release existing wake lock if any
-        if (wakeLockRef.current) {
-          try {
-            await wakeLockRef.current.release();
-          } catch (e) {
-            // Ignore release errors
-          }
+      // Release existing wake lock if any
+      if (wakeLockRef.current) {
+        try {
+          await wakeLockRef.current.release();
+        } catch (e) {
+          // Ignore release errors
         }
-        
-        const wakeLock = await navigator.wakeLock.request('screen');
-        wakeLockRef.current = wakeLock;
-        setIsActive(true);
-        
-        wakeLock.addEventListener('release', () => {
-          setIsActive(false);
-          wakeLockRef.current = null;
-        });
       }
+      
+      const wakeLock = await navigator.wakeLock.request('screen');
+      wakeLockRef.current = wakeLock;
+      setIsActive(true);
+      
+      wakeLock.addEventListener('release', () => {
+        setIsActive(false);
+        wakeLockRef.current = null;
+      });
     } catch (err) {
       console.error('Wake lock error:', err);
       setIsActive(false);
+      throw err;
     }
-  }, []);
+  }, [isSupported]);
 
   const releaseWakeLock = useCallback(async () => {
     if (wakeLockRef.current) {
@@ -59,5 +63,5 @@ export function useWakeLock(enabled: boolean) {
     };
   }, [enabled, requestWakeLock]);
 
-  return { isActive, requestWakeLock, releaseWakeLock };
+  return { isActive, isSupported, requestWakeLock, releaseWakeLock };
 }

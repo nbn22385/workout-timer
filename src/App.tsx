@@ -2,9 +2,11 @@ import { useState, useCallback, useEffect } from 'react';
 import { CircularRing } from './components/CircularRing';
 import { Settings } from './components/Settings';
 import { Icon } from './components/Icon';
+import { Toast } from './components/Toast';
 import { useTimer } from './hooks/useTimer';
 import { useSound } from './hooks/useSound';
 import { useWakeLock } from './hooks/useWakeLock';
+import { useToast } from './hooks/useToast';
 import type { TimerConfig, Settings as SettingsType, Preset } from './types';
 import { DEFAULT_SIMPLE_CONFIG } from './types';
 import { THEMES } from './themes';
@@ -31,7 +33,8 @@ function App() {
     endBeep,
   });
 
-  const { requestWakeLock, releaseWakeLock } = useWakeLock(wakeLock);
+  const { requestWakeLock, releaseWakeLock, isSupported: wakeLockSupported } = useWakeLock(wakeLock);
+  const { toasts, showToast, removeToast } = useToast();
 
   const handleCountdown = useCallback(
     (remainingTime: number) => {
@@ -176,20 +179,38 @@ function App() {
           >
             <Icon name={settings.countdownBeep ? 'speaker' : 'speaker-off'} size={20} />
           </button>
-          <button
-            className={`toggle-btn ${wakeLock ? 'active' : ''}`}
-            onClick={async () => {
-              const newWakeLock = !settings.wakeLock;
-              handleSettingsChange({ wakeLock: newWakeLock });
-              if (newWakeLock) {
+        <button
+          className={`toggle-btn ${wakeLock ? 'active' : ''}`}
+          disabled={!wakeLockSupported}
+          onClick={async () => {
+            // Check if running as standalone PWA
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || 
+                                 (window.navigator as any).standalone === true;
+            
+            if (!isStandalone) {
+              showToast('Add app to home screen to enable wake lock', 'warning');
+              return;
+            }
+            
+            const newWakeLock = !settings.wakeLock;
+            handleSettingsChange({ wakeLock: newWakeLock });
+            
+            if (newWakeLock) {
+              try {
                 await requestWakeLock();
-              } else {
-                await releaseWakeLock();
+                showToast('Screen will stay on during workout', 'success');
+              } catch (err) {
+                handleSettingsChange({ wakeLock: false });
+                showToast('Could not enable wake lock', 'error');
               }
-            }}
-          >
-            <Icon name={wakeLock ? 'lock' : 'unlock'} size={20} />
-          </button>
+            } else {
+              await releaseWakeLock();
+              showToast('Wake lock disabled', 'info');
+            }
+          }}
+        >
+          <Icon name={wakeLock ? 'lock' : 'unlock'} size={20} />
+        </button>
         </div>
       </div>
 
@@ -205,6 +226,7 @@ function App() {
           onSettingsChange={handleSettingsChange}
         />
       )}
+      <Toast toasts={toasts} onRemove={removeToast} />
     </div>
   );
 }
