@@ -128,39 +128,41 @@ function App() {
 
   return (
     <div className="app">
-      <main className={`timer-display ${status.state === 'completed' ? 'completed' : ''}`}>
-        <CircularRing
-          remainingTime={status.remainingTime}
-          totalTime={status.totalStepTime}
-          stepType={status.stepType}
-          stepName={status.stepName}
-          showCompletion={isCompleted}
-        />
+      <div className="timer-area">
+        <main className={`timer-display ${status.state === 'completed' ? 'completed' : ''}`}>
+          <CircularRing
+            remainingTime={status.remainingTime}
+            totalTime={status.totalStepTime}
+            stepType={status.stepType}
+            stepName={status.stepName}
+            showCompletion={isCompleted}
+          />
 
-        {config.mode === 'simple' && (
-          <div className="round-info">
-            {status.isResting ? 'Rest' : 'Round'} {status.currentRound} / {status.totalRounds}
-          </div>
-        )}
+          {config.mode === 'simple' && (
+            <div className="round-info">
+              {status.isResting ? 'Rest' : 'Round'} {status.currentRound} / {status.totalRounds}
+            </div>
+          )}
 
-        {config.mode === 'custom' && (
-          <div className="round-info">
-            {status.stepType === 'rest' ? 'Rest' : 'Round'} {status.currentRound} 
-            {status.totalRounds !== Infinity && ` / ${status.totalRounds}`}
-          </div>
-        )}
-      </main>
+          {config.mode === 'custom' && (
+            <div className="round-info">
+              {status.stepType === 'rest' ? 'Rest' : 'Round'} {status.currentRound} 
+              {status.totalRounds !== Infinity && ` / ${status.totalRounds}`}
+            </div>
+          )}
+        </main>
 
-      <div className="controls">
-        <button className="control-btn reset" onClick={reset} disabled={status.state === 'idle'}>
-          <Icon name="reset" size={24} />
-        </button>
-        <button className="control-btn play-pause" onClick={handlePlayPause}>
-          {isRunning ? <Icon name="pause" size={28} /> : <Icon name="play" size={28} />}
-        </button>
-        <button className="control-btn skip" onClick={skip} disabled={status.state === 'idle' || isCompleted}>
-          <Icon name="skip" size={24} />
-        </button>
+        <div className="controls">
+          <button className="control-btn reset" onClick={reset} disabled={status.state === 'idle'}>
+            <Icon name="reset" size={24} />
+          </button>
+          <button className="control-btn play-pause" onClick={handlePlayPause}>
+            {isRunning ? <Icon name="pause" size={28} /> : <Icon name="play" size={28} />}
+          </button>
+          <button className="control-btn skip" onClick={skip} disabled={status.state === 'idle' || isCompleted}>
+            <Icon name="skip" size={24} />
+          </button>
+        </div>
       </div>
 
       <div className="bottom-toggles">
