@@ -694,7 +694,7 @@ body {
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 24px;
+    gap: 32px;
   }
 
   .timer-display {
@@ -712,7 +712,7 @@ body {
     flex-direction: column;
     gap: 12px;
     padding: 0;
-    margin: 0;
+    margin: 0 0 0 32px;
     align-items: center;
   }
 
@@ -722,7 +722,7 @@ body {
     display: flex;
     align-items: center;
     order: -1;
-    margin-right: 16px;
+    margin-right: 32px;
   }
 
   .timer-area {
