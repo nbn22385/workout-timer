@@ -295,13 +295,22 @@ export function Settings({
                 <div
                   key={step.id}
                   className={`step-item ${dragOverIndex === index ? 'drag-over' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
-                  draggable
-                  onDragStart={() => handleDragStart(index)}
-                  onDragOver={(e) => handleDragOver(e, index)}
-                  onDragEnter={() => handleDragEnter(index)}
-                  onDrop={(e) => handleDrop(e, index)}
-                  onDragEnd={handleDragEnd}
                 >
+                  <span
+                    className="drag-handle"
+                    title="Drag to reorder"
+                    draggable
+                    onDragStart={(e) => {
+                      handleDragStart(index);
+                      e.dataTransfer.effectAllowed = 'move';
+                    }}
+                    onDragOver={(e) => handleDragOver(e, index)}
+                    onDragEnter={() => handleDragEnter(index)}
+                    onDrop={(e) => handleDrop(e, index)}
+                    onDragEnd={handleDragEnd}
+                  >
+                    ⋮⋮
+                  </span>
                   <span className="step-number">{index + 1}</span>
                   <div className="step-fields">
                     <input
@@ -343,7 +352,6 @@ export function Settings({
                   </div>
                   <div className="step-actions">
                     <button onClick={() => removeStep(index)} className="delete">×</button>
-                    <span className="drag-handle" title="Drag to reorder" draggable>⋮⋮</span>
                   </div>
                 </div>
               ))}

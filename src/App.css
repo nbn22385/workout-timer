@@ -688,12 +688,17 @@ body {
   color: var(--color-text-muted);
   cursor: grab;
   font-size: 16px;
-  padding: 4px;
+  padding: 4px 6px;
   user-select: none;
+  flex-shrink: 0;
 }
 
 .drag-handle:active {
   cursor: grabbing;
+}
+
+.step-item .drag-handle {
+  order: -1;
 }
 
 .step-actions button {
