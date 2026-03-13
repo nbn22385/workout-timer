@@ -94,8 +94,10 @@ export function useTimer({
 
   const getTimerStatus = useCallback((): TimerStatus => {
     const step = getCurrentStep();
+    const currentState = stateRef.current;
+    
     // When state is 'completed', show the completed state properly
-    if (stateRef.current === 'completed') {
+    if (currentState === 'completed') {
       return {
         state: 'completed',
         currentRound,
@@ -109,7 +111,7 @@ export function useTimer({
       };
     }
     return {
-      state: stateRef.current,
+      state: currentState,
       currentRound,
       totalRounds: getTotalRounds(),
       currentStepIndex,
@@ -119,7 +121,7 @@ export function useTimer({
       totalStepTime,
       isResting: step.type === 'rest',
     };
-  }, [currentRound, getTotalRounds, currentStepIndex, getCurrentStep, remainingTime, totalStepTime, state]);
+  }, [currentRound, getTotalRounds, currentStepIndex, getCurrentStep, remainingTime, totalStepTime]);
 
   const clearTimerInterval = useCallback(() => {
     if (intervalRef.current) {

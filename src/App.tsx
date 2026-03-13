@@ -118,7 +118,7 @@ function App() {
           totalTime={status.totalStepTime}
           stepType={status.stepType}
           stepName={status.stepName}
-          showCompletion={status.state === 'completed'}
+          showCompletion={isCompleted}
         />
 
         {config.mode === 'simple' && (
