@@ -678,14 +678,13 @@ body {
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0;
+  left: 44px;
   background: var(--color-accent);
   display: flex;
   align-items: center;
   justify-content: flex-end;
   padding-right: 16px;
-  z-index: 0;
-  transform: translateX(-100%);
+  z-index: 1;
 }
 
 /* Reorder buttons area (left side of card) */
@@ -779,7 +778,7 @@ body {
   min-width: 0;
   align-items: center;
   position: relative;
-  z-index: 3;
+  z-index: 2;
 }
 
 .step-fields input[type="text"] {
