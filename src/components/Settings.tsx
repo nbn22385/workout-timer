@@ -503,6 +503,18 @@ export function Settings({
                       }
                     }}
                     onTouchEnd={handleDragEnd}
+                    onMouseDown={(e) => {
+                      setDraggedIndex(index);
+                      setTouchStartY(e.clientY);
+                      setTouchDragOffset(0);
+                    }}
+                    onMouseMove={(e) => {
+                      if (draggedIndex === index) {
+                        setTouchDragOffset(e.clientY - touchStartY);
+                      }
+                    }}
+                    onMouseUp={handleDragEnd}
+                    onMouseLeave={handleDragEnd}
                   >
                     <span
                       className="drag-handle"
@@ -533,7 +545,6 @@ export function Settings({
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                   >
-                    <span className="step-number">{index + 1}</span>
                     <div className="step-fields">
                       <input
                         type="text"
