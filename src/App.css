@@ -602,7 +602,7 @@ body {
 }
 
 .settings-form {
-  padding: 24px 28px;
+  padding: 16px 12px;
 }
 
 .form-group {
@@ -649,14 +649,14 @@ body {
 .steps-list {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-bottom: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .step-swipe-container {
   position: relative;
   overflow: hidden;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   border-radius: 12px;
   padding-left: 8px;
 }
@@ -748,7 +748,7 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 8px 12px 8px 44px;
+  padding: 12px 14px 12px 48px;
   background: var(--color-bg);
   border-radius: 12px;
   transition: transform 0.2s ease-out;
