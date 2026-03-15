@@ -663,9 +663,9 @@ body {
 .step-delete-zone {
   position: absolute;
   top: 0;
-  right: 2px;
+  right: 0;
   bottom: 0;
-  left: 36px;
+  left: 0;
   background: var(--color-accent);
   display: flex;
   align-items: center;
@@ -678,7 +678,7 @@ body {
 .reorder-buttons {
   position: absolute;
   top: 8px;
-  left: 0;
+  left: 8px;
   bottom: 8px;
   width: 36px;
   display: flex;
@@ -688,6 +688,12 @@ body {
   gap: 2px;
   z-index: 3;
   background: transparent;
+}
+
+.step-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
 }
 
 .reorder-btn {
@@ -752,7 +758,7 @@ body {
   transition: transform 0.2s ease-out;
   position: relative;
   z-index: 2;
-  margin-left: 36px;
+  flex: 1;
 }
 
 

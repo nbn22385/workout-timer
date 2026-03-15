@@ -423,38 +423,39 @@ export function Settings({
                       Delete
                     </button>
                    </div>
-                   
-                  {/* Reorder buttons on left side */}
-                  <div className="reorder-buttons">
-                    <button
-                      className="reorder-btn"
-                      onClick={() => moveStep(index, index - 1)}
-                      disabled={index === 0}
-                      title="Move up"
-                    >
-                      ▲
-                    </button>
-                    <button
-                      className="reorder-btn"
-                      onClick={() => moveStep(index, index + 1)}
-                      disabled={index === customConfig.steps.length - 1}
-                      title="Move down"
-                    >
-                      ▼
-                    </button>
-                  </div>
+                    
+                  <div className="step-wrapper">
+                    {/* Reorder buttons on left side */}
+                    <div className="reorder-buttons">
+                      <button
+                        className="reorder-btn"
+                        onClick={() => moveStep(index, index - 1)}
+                        disabled={index === 0}
+                        title="Move up"
+                      >
+                        ▲
+                      </button>
+                      <button
+                        className="reorder-btn"
+                        onClick={() => moveStep(index, index + 1)}
+                        disabled={index === customConfig.steps.length - 1}
+                        title="Move down"
+                      >
+                        ▼
+                      </button>
+                    </div>
 
-                  {/* Step content - for swipe */}
-                  <div
-                    className="step-item"
-                    style={{ 
-                      transform: `translateX(${swipeStates[index] || 0}px)`,
-                      transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
-                    }}
-                    onTouchStart={(e) => handleTouchStart(e, index)}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
-                  >
+                    {/* Step content - for swipe */}
+                    <div
+                      className="step-item"
+                      style={{ 
+                        transform: `translateX(${swipeStates[index] || 0}px)`,
+                        transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
+                      }}
+                      onTouchStart={(e) => handleTouchStart(e, index)}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                    >
                     <div className="step-fields">
                       <input
                         type="text"
@@ -546,6 +547,7 @@ export function Settings({
                     <div className="step-actions">
                       <button onClick={() => removeStep(index)} className="delete">×</button>
                     </div>
+                  </div>
                   </div>
                 </div>
               ))}
