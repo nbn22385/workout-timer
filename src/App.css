@@ -664,7 +664,7 @@ body {
 .step-delete-zone {
   position: absolute;
   top: 0;
-  right: 0;
+  right: 1px;
   bottom: 0;
   left: 40px;
   background: var(--color-accent);
