@@ -39,6 +39,12 @@ export function Settings({
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [touchStartY, setTouchStartY] = useState<number>(0);
   const [touchDragOffset, setTouchDragOffset] = useState<number>(0);
+  
+  // Swipe to delete state
+  const [swipeStates, setSwipeStates] = useState<Record<string, number>>({});
+  const [activeSwipeIndex, setActiveSwipeIndex] = useState<number | null>(null);
+  const [swipeStartX, setSwipeStartX] = useState<number>(0);
+  const [isDragging, setIsDragging] = useState(false);
 
   const handleClose = () => {
     if (mode === 'simple') {
@@ -125,40 +131,71 @@ export function Settings({
 
   // Touch event handlers for mobile
   const handleTouchStart = (e: React.TouchEvent, index: number) => {
-    // Only start drag if touching the drag handle area
     const touch = e.touches[0];
     const target = e.target as HTMLElement;
-    if (!target.classList.contains('drag-handle')) {
+    
+    // If touching drag handle, use drag mode
+    if (target.classList.contains('drag-handle')) {
+      setDraggedIndex(index);
+      setTouchStartY(touch.clientY);
+      setTouchDragOffset(0);
       return;
     }
     
-    setDraggedIndex(index);
-    setTouchStartY(touch.clientY);
-    setTouchDragOffset(0);
+    // Otherwise, start swipe-to-delete mode
+    if (!target.closest('.work-rest-toggle') && 
+        !target.closest('.duration-selector') && 
+        !target.closest('.step-actions') &&
+        !target.closest('.drag-handle') &&
+        !target.closest('input') &&
+        !target.closest('button')) {
+      setActiveSwipeIndex(index);
+      setSwipeStartX(touch.clientX);
+      setIsDragging(false);
+    }
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    if (draggedIndex === null) return;
-    
-    e.preventDefault();
     const touch = e.touches[0];
-    setTouchDragOffset(touch.clientY - touchStartY);
     
-    // Find which item we're hovering over
-    const touchY = touch.clientY;
-    const stepsList = document.querySelector('.steps-list');
-    if (stepsList) {
-      const items = stepsList.querySelectorAll('.step-item');
-      items.forEach((item, index) => {
-        const rect = item.getBoundingClientRect();
-        if (touchY >= rect.top && touchY <= rect.bottom) {
-          setDragOverIndex(index);
-        }
-      });
+    // Handle drag mode (for drag-and-drop reordering)
+    if (draggedIndex !== null) {
+      e.preventDefault();
+      setTouchDragOffset(touch.clientY - touchStartY);
+      
+      const touchY = touch.clientY;
+      const stepsList = document.querySelector('.steps-list');
+      if (stepsList) {
+        const items = stepsList.querySelectorAll('.step-item');
+        items.forEach((item, index) => {
+          const rect = item.getBoundingClientRect();
+          if (touchY >= rect.top && touchY <= rect.bottom) {
+            setDragOverIndex(index);
+          }
+        });
+      }
+      return;
+    }
+    
+    // Handle swipe mode
+    if (activeSwipeIndex !== null) {
+      const deltaX = touch.clientX - swipeStartX;
+      if (Math.abs(deltaX) > 10) {
+        setIsDragging(true);
+        e.preventDefault();
+        
+        // Only allow swiping left (negative deltaX)
+        const swipeAmount = Math.min(0, deltaX);
+        setSwipeStates(prev => ({
+          ...prev,
+          [activeSwipeIndex]: swipeAmount
+        }));
+      }
     }
   };
 
   const handleTouchEnd = () => {
+    // Handle drag-and-drop completion
     if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
       setCustomConfig((prev) => {
         const newSteps = [...prev.steps];
@@ -168,9 +205,28 @@ export function Settings({
       });
     }
     
+    // Handle swipe completion
+    if (activeSwipeIndex !== null) {
+      const swipeAmount = swipeStates[activeSwipeIndex] || 0;
+      const threshold = -80; // px to trigger delete reveal
+      
+      if (swipeAmount < threshold) {
+        // Keep the swipe state - item will stay revealed
+      } else {
+        // Spring back to 0
+        setSwipeStates(prev => ({
+          ...prev,
+          [activeSwipeIndex]: 0
+        }));
+      }
+    }
+    
     setDraggedIndex(null);
     setDragOverIndex(null);
     setTouchDragOffset(0);
+    if (!isDragging) {
+      setActiveSwipeIndex(null);
+    }
   };
 
   const handleSavePreset = () => {
@@ -200,6 +256,16 @@ export function Settings({
 
   const handleDeletePreset = (id: string) => {
     onDeletePreset(id);
+  };
+
+  const handleSwipeDelete = (index: number) => {
+    // Reset the swipe state and remove the step
+    setSwipeStates(prev => ({
+      ...prev,
+      [index]: 0
+    }));
+    setActiveSwipeIndex(null);
+    removeStep(index);
   };
 
   return (
@@ -406,117 +472,140 @@ export function Settings({
               {customConfig.steps.map((step, index) => (
                 <div
                   key={step.id}
-                  className={`step-item ${dragOverIndex === index ? 'drag-over' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
+                  className={`step-swipe-container ${dragOverIndex === index ? 'drag-over' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
                 >
-                  <span
-                    className="drag-handle"
-                    title="Drag to reorder"
-                    draggable
-                    onDragStart={(e) => {
-                      handleDragStart(index);
-                      e.dataTransfer.effectAllowed = 'move';
+                  {/* Delete zone (revealed on swipe) */}
+                  <div className="step-delete-zone">
+                    <button 
+                      className="swipe-delete-btn"
+                      onClick={() => handleSwipeDelete(index)}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                  
+                  {/* Actual step content */}
+                  <div
+                    className="step-item"
+                    style={{ 
+                      transform: `translateX(${swipeStates[index] || 0}px)`,
+                      transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
                     }}
-                    onDragOver={(e) => handleDragOver(e, index)}
-                    onDragEnter={() => handleDragEnter(index)}
-                    onDrop={(e) => handleDrop(e, index)}
-                    onDragEnd={handleDragEnd}
                     onTouchStart={(e) => handleTouchStart(e, index)}
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
-                    style={{ transform: draggedIndex === index ? `translateY(${touchDragOffset}px)` : 'none' }}
                   >
-                    ⋮⋮
-                  </span>
-                  <span className="step-number">{index + 1}</span>
-                  <div className="step-fields">
-                    <input
-                      type="text"
-                      value={step.name}
-                      onChange={(e) => updateStep(index, { name: e.target.value })}
-                      placeholder="Step name"
-                    />
-                    <div className="duration-selector">
+                    <span
+                      className="drag-handle"
+                      title="Drag to reorder"
+                      draggable
+                      onDragStart={(e) => {
+                        handleDragStart(index);
+                        e.dataTransfer.effectAllowed = 'move';
+                      }}
+                      onDragOver={(e) => handleDragOver(e, index)}
+                      onDragEnter={() => handleDragEnter(index)}
+                      onDrop={(e) => handleDrop(e, index)}
+                      onDragEnd={handleDragEnd}
+                      onTouchStart={(e) => handleTouchStart(e, index)}
+                      onTouchMove={handleTouchMove}
+                      onTouchEnd={handleTouchEnd}
+                      style={{ transform: draggedIndex === index ? `translateY(${touchDragOffset}px)` : 'none' }}
+                    >
+                      ⋮⋮
+                    </span>
+                    <span className="step-number">{index + 1}</span>
+                    <div className="step-fields">
                       <input
-                        type="number"
-                        min="0"
-                        max="5"
-                        value={Math.floor(step.duration / 60)}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === '') {
-                            updateStep(index, { duration: step.duration });
-                          } else {
-                            const mins = parseInt(value);
-                            if (!isNaN(mins)) {
-                              const seconds = step.duration % 60;
-                              updateStep(index, { duration: Math.max(0, Math.min(5, mins)) * 60 + seconds });
-                            }
-                          }
-                        }}
-                        onBlur={(e) => {
-                          if (e.target.value === '') {
-                            updateStep(index, { duration: step.duration });
-                          }
-                        }}
+                        type="text"
+                        value={step.name}
+                        onChange={(e) => updateStep(index, { name: e.target.value })}
+                        placeholder="Step name"
                       />
-                      <span>:</span>
-                      <input
-                        type="number"
-                        min="0"
-                        max="59"
-                        value={step.duration % 60}
-                        onChange={(e) => {
-                          const value = e.target.value;
-                          if (value === '') {
-                            updateStep(index, { duration: step.duration });
-                          } else {
-                            const secs = parseInt(value);
-                            if (!isNaN(secs)) {
-                              const mins = Math.floor(step.duration / 60);
-                              updateStep(index, { duration: mins * 60 + Math.max(0, Math.min(59, secs)) });
+                      <div className="duration-selector">
+                        <input
+                          type="number"
+                          min="0"
+                          max="5"
+                          value={Math.floor(step.duration / 60)}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '') {
+                              updateStep(index, { duration: step.duration });
+                            } else {
+                              const mins = parseInt(value);
+                              if (!isNaN(mins)) {
+                                const seconds = step.duration % 60;
+                                updateStep(index, { duration: Math.max(0, Math.min(5, mins)) * 60 + seconds });
+                              }
                             }
-                          }
-                        }}
-                        onBlur={(e) => {
-                          if (e.target.value === '') {
-                            updateStep(index, { duration: step.duration });
-                          }
-                        }}
-                      />
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateStep(index, { duration: step.duration });
+                            }
+                          }}
+                        />
+                        <span>:</span>
+                        <input
+                          type="number"
+                          min="0"
+                          max="59"
+                          value={step.duration % 60}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value === '') {
+                              updateStep(index, { duration: step.duration });
+                            } else {
+                              const secs = parseInt(value);
+                              if (!isNaN(secs)) {
+                                const mins = Math.floor(step.duration / 60);
+                                updateStep(index, { duration: mins * 60 + Math.max(0, Math.min(59, secs)) });
+                              }
+                            }
+                          }}
+                          onBlur={(e) => {
+                            if (e.target.value === '') {
+                              updateStep(index, { duration: step.duration });
+                            }
+                          }}
+                        />
+                      </div>
+                      <div className="work-rest-toggle">
+                        <button
+                          type="button"
+                          className={step.type === 'work' ? 'active' : ''}
+                          onClick={() => {
+                            const newType: StepType = 'work';
+                            let newName = step.name;
+                            if (newName.toLowerCase() === 'rest') {
+                              newName = 'Work';
+                            }
+                            updateStep(index, { type: newType, name: newName });
+                          }}
+                        >
+                          Work
+                        </button>
+                        <button
+                          type="button"
+                          className={step.type === 'rest' ? 'active' : ''}
+                          onClick={() => {
+                            const newType: StepType = 'rest';
+                            let newName = step.name;
+                            if (newName.toLowerCase() === 'work') {
+                              newName = 'Rest';
+                            }
+                            updateStep(index, { type: newType, name: newName });
+                          }}
+                        >
+                          Rest
+                        </button>
+                      </div>
                     </div>
-                    <div className="work-rest-toggle">
-                      <button
-                        type="button"
-                        className={step.type === 'work' ? 'active' : ''}
-                        onClick={() => {
-                          const newType: StepType = 'work';
-                          let newName = step.name;
-                          if (newName.toLowerCase() === 'rest') {
-                            newName = 'Work';
-                          }
-                          updateStep(index, { type: newType, name: newName });
-                        }}
-                      >
-                        Work
-                      </button>
-                      <button
-                        type="button"
-                        className={step.type === 'rest' ? 'active' : ''}
-                        onClick={() => {
-                          const newType: StepType = 'rest';
-                          let newName = step.name;
-                          if (newName.toLowerCase() === 'work') {
-                            newName = 'Rest';
-                          }
-                          updateStep(index, { type: newType, name: newName });
-                        }}
-                      >
-                        Rest
-                      </button>
+                    {/* Desktop delete button - always visible */}
+                    <div className="step-actions">
+                      <button onClick={() => removeStep(index)} className="delete">×</button>
                     </div>
-                  </div>
-                  <div className="step-actions">
-                    <button onClick={() => removeStep(index)} className="delete">×</button>
                   </div>
                 </div>
               ))}

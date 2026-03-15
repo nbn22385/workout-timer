@@ -595,6 +595,41 @@ body {
   margin-bottom: 16px;
 }
 
+.step-swipe-container {
+  position: relative;
+  overflow: hidden;
+  margin-bottom: 8px;
+  border-radius: 12px;
+}
+
+.step-delete-zone {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 16px;
+}
+
+.swipe-delete-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.swipe-delete-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .step-item {
   display: flex;
   align-items: center;
@@ -602,12 +637,14 @@ body {
   padding: 8px 16px;
   background: var(--color-bg);
   border-radius: 12px;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease-out;
+  position: relative;
+  z-index: 1;
 }
 
 .step-item.dragging {
   opacity: 0.5;
-  transform: scale(0.98);
+  transform: scale(0.98) !important;
 }
 
 .step-item.drag-over {
@@ -723,6 +760,18 @@ body {
   display: flex;
   gap: 4px;
   align-items: center;
+}
+
+/* Hide desktop delete button on touch devices (show swipe instead) */
+@media (hover: none) and (pointer: coarse) {
+  .step-actions {
+    display: none;
+  }
+  
+  .step-item {
+    touch-action: pan-y;
+    user-select: none;
+  }
 }
 
 .drag-handle {
