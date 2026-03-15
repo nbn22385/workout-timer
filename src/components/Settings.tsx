@@ -414,18 +414,18 @@ export function Settings({
                   key={step.id}
                   className="step-swipe-container"
                 >
-                  {/* Delete zone (revealed on swipe) */}
-                  <div className="step-delete-zone">
-                    <button 
-                      className="swipe-delete-btn"
-                      onClick={() => handleSwipeDelete(index)}
-                    >
-                      Delete
-                    </button>
-                   </div>
-                    
-                  <div className="step-wrapper">
-                    {/* Reorder buttons on left side */}
+                  {/* Step item - for swipe */}
+                  <div
+                    className="step-item"
+                    style={{ 
+                      transform: `translateX(${swipeStates[index] || 0}px)`,
+                      transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
+                    }}
+                    onTouchStart={(e) => handleTouchStart(e, index)}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  >
+                    {/* Reorder buttons (absolute, left side) */}
                     <div className="reorder-buttons">
                       <button
                         className="reorder-btn"
@@ -445,17 +445,15 @@ export function Settings({
                       </button>
                     </div>
 
-                    {/* Step content - for swipe */}
-                    <div
-                      className="step-item"
-                      style={{ 
-                        transform: `translateX(${swipeStates[index] || 0}px)`,
-                        transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
-                      }}
-                      onTouchStart={(e) => handleTouchStart(e, index)}
-                      onTouchMove={handleTouchMove}
-                      onTouchEnd={handleTouchEnd}
-                    >
+                    {/* Delete zone (revealed on swipe) */}
+                    <div className="step-delete-zone">
+                      <button 
+                        className="swipe-delete-btn"
+                        onClick={() => handleSwipeDelete(index)}
+                      >
+                        Delete
+                      </button>
+                    </div>
                     <div className="step-fields">
                       <input
                         type="text"
@@ -547,7 +545,6 @@ export function Settings({
                     <div className="step-actions">
                       <button onClick={() => removeStep(index)} className="delete">×</button>
                     </div>
-                  </div>
                   </div>
                 </div>
               ))}

@@ -660,12 +660,25 @@ body {
   border-radius: 12px;
 }
 
+.step-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 14px 12px 52px;
+  background: var(--color-bg);
+  border-radius: 12px;
+  transition: transform 0.2s ease-out;
+  z-index: 2;
+}
+
+/* Delete zone (revealed on swipe) - covers only content area */
 .step-delete-zone {
   position: absolute;
   top: 0;
   right: 0;
   bottom: 0;
-  left: 0;
+  left: 44px;
   background: var(--color-accent);
   display: flex;
   align-items: center;
@@ -688,12 +701,6 @@ body {
   gap: 2px;
   z-index: 3;
   background: transparent;
-}
-
-.step-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
 }
 
 .reorder-btn {
@@ -748,20 +755,6 @@ body {
   background: rgba(255, 255, 255, 0.3);
 }
 
-.step-item {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 12px 14px;
-  background: var(--color-bg);
-  border-radius: 12px;
-  transition: transform 0.2s ease-out;
-  position: relative;
-  z-index: 2;
-  flex: 1;
-  margin-left: 8px;
-}
-
 
 
 .step-number {
@@ -784,7 +777,6 @@ body {
   overflow: visible;
   min-width: 0;
   align-items: center;
-  position: relative;
 }
 
 .step-fields input[type="text"] {
