@@ -39,7 +39,10 @@ function App() {
   // Check if running in standalone PWA mode
   const isPwaMode = typeof window !== 'undefined' && (
     window.matchMedia('(display-mode: standalone)').matches ||
-    (window.navigator as any).standalone === true
+    (window.navigator as any).standalone === true ||
+    // Additional check for iOS Safari which may not report display-mode correctly
+    (window.navigator.userAgent.includes('iPhone') || window.navigator.userAgent.includes('iPad')) && 
+    (window.navigator as any).standalone !== undefined
   );
   
   // Wake lock is available only when supported AND in PWA mode

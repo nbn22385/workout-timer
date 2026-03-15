@@ -50,9 +50,13 @@ export function useWakeLock(enabled: boolean) {
   // Handle visibility changes - re-request wake lock when page becomes visible
   useEffect(() => {
     const handleVisibilityChange = async () => {
-      if (document.visibilityState === 'visible' && enabled && wakeLockRef.current) {
-        // Re-request wake lock if we lost it
-        await requestWakeLock();
+      if (document.visibilityState === 'visible' && enabled && !wakeLockRef.current) {
+        // Re-request wake lock if we lost it (wakeLockRef.current is null)
+        try {
+          await requestWakeLock();
+        } catch (err) {
+          console.warn('Could not re-acquire wake lock on visibility change:', err);
+        }
       }
     };
 
@@ -62,6 +66,28 @@ export function useWakeLock(enabled: boolean) {
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
   }, [enabled, requestWakeLock]);
+
+  // Effect to request wake lock when enabled changes to true
+  useEffect(() => {
+    const requestIfEnabled = async () => {
+      if (enabled && isSupported && !wakeLockRef.current) {
+        try {
+          await requestWakeLock();
+        } catch (err) {
+          console.warn('Could not acquire wake lock:', err);
+        }
+      }
+    };
+
+    requestIfEnabled();
+  }, [enabled, isSupported, requestWakeLock]);
+
+  // Effect to release wake lock when enabled changes to false
+  useEffect(() => {
+    if (!enabled && wakeLockRef.current) {
+      releaseWakeLock();
+    }
+  }, [enabled, releaseWakeLock]);
 
   return { isActive, isSupported, requestWakeLock, releaseWakeLock };
 }
