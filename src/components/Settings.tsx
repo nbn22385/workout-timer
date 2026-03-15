@@ -136,23 +136,26 @@ export function Settings({
     
     // If touching drag handle, use drag mode
     if (target.classList.contains('drag-handle')) {
+      e.stopPropagation();
       setDraggedIndex(index);
       setTouchStartY(touch.clientY);
       setTouchDragOffset(0);
       return;
     }
     
-    // Otherwise, start swipe-to-delete mode
-    if (!target.closest('.work-rest-toggle') && 
-        !target.closest('.duration-selector') && 
-        !target.closest('.step-actions') &&
-        !target.closest('.drag-handle') &&
-        !target.closest('input') &&
-        !target.closest('button')) {
-      setActiveSwipeIndex(index);
-      setSwipeStartX(touch.clientX);
-      setIsDragging(false);
+    // Don't start swipe if touching input fields, buttons, or toggle
+    if (target.closest('.work-rest-toggle') || 
+        target.closest('.duration-selector') ||
+        target.closest('input') ||
+        target.closest('button') ||
+        target.classList.contains('drag-handle')) {
+      return;
     }
+    
+    // Start swipe-to-delete mode
+    setActiveSwipeIndex(index);
+    setSwipeStartX(touch.clientX);
+    setIsDragging(false);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -415,7 +418,7 @@ export function Settings({
                 }}
               />
             </div>
-            <div className="form-group">
+            <div className="form-group inline">
               <label>Number of Rounds</label>
               <input
                 type="number"
@@ -443,7 +446,7 @@ export function Settings({
           </div>
         ) : (
           <div className="settings-form custom-mode">
-            <div className="form-group">
+            <div className="form-group inline">
               <label>Number of Rounds</label>
               <input
                 type="number"
@@ -507,9 +510,19 @@ export function Settings({
                       onDragEnter={() => handleDragEnter(index)}
                       onDrop={(e) => handleDrop(e, index)}
                       onDragEnd={handleDragEnd}
-                      onTouchStart={(e) => handleTouchStart(e, index)}
-                      onTouchMove={handleTouchMove}
-                      onTouchEnd={handleTouchEnd}
+                      onTouchStart={(e) => {
+                        e.stopPropagation();
+                        setDraggedIndex(index);
+                        setTouchStartY(e.touches[0].clientY);
+                        setTouchDragOffset(0);
+                      }}
+                      onTouchMove={(e) => {
+                        e.preventDefault();
+                        if (draggedIndex === index) {
+                          setTouchDragOffset(e.touches[0].clientY - touchStartY);
+                        }
+                      }}
+                      onTouchEnd={handleDragEnd}
                       style={{ transform: draggedIndex === index ? `translateY(${touchDragOffset}px)` : 'none' }}
                     >
                       ⋮⋮
