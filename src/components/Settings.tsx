@@ -41,7 +41,6 @@ export function Settings({
   const [swipeStates, setSwipeStates] = useState<Record<string, number>>({});
   const [activeSwipeIndex, setActiveSwipeIndex] = useState<number | null>(null);
   const [swipeStartX, setSwipeStartX] = useState<number>(0);
-  const [isDragging, setIsDragging] = useState(false);
 
   const handleClose = () => {
     if (mode === 'simple') {
@@ -116,7 +115,6 @@ export function Settings({
     // Start swipe-to-delete mode
     setActiveSwipeIndex(index);
     setSwipeStartX(touch.clientX);
-    setIsDragging(false);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -125,7 +123,6 @@ export function Settings({
       const touch = e.touches[0];
       const deltaX = touch.clientX - swipeStartX;
       if (Math.abs(deltaX) > 10) {
-        setIsDragging(true);
         e.preventDefault();
         
         // Only allow swiping left (negative deltaX)
@@ -153,9 +150,8 @@ export function Settings({
           [activeSwipeIndex]: 0
         }));
       }
-    }
-    
-    if (!isDragging) {
+      
+      // Always reset active swipe index on touch end
       setActiveSwipeIndex(null);
     }
   };
