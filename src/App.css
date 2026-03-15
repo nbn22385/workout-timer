@@ -658,15 +658,14 @@ body {
   overflow: hidden;
   margin-bottom: 4px;
   border-radius: 12px;
-  padding-left: 8px;
 }
 
 .step-delete-zone {
   position: absolute;
   top: 0;
-  right: 1px;
+  right: 2px;
   bottom: 0;
-  left: 40px;
+  left: 36px;
   background: var(--color-accent);
   display: flex;
   align-items: center;
@@ -679,7 +678,7 @@ body {
 .reorder-buttons {
   position: absolute;
   top: 8px;
-  left: 8px;
+  left: 0;
   bottom: 8px;
   width: 36px;
   display: flex;
@@ -747,12 +746,13 @@ body {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 12px 14px 12px 48px;
+  padding: 12px 14px;
   background: var(--color-bg);
   border-radius: 12px;
   transition: transform 0.2s ease-out;
   position: relative;
   z-index: 2;
+  margin-left: 36px;
 }
 
 
