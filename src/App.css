@@ -631,6 +631,21 @@ body {
   padding-right: 16px;
 }
 
+/* Drag handle area (left side of card) */
+.drag-handle-area {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  background: transparent;
+  cursor: grab;
+}
+
 .swipe-delete-btn {
   background: rgba(255, 255, 255, 0.2);
   color: white;
@@ -649,13 +664,14 @@ body {
 .step-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 20px;
+  gap: 8px;
+  padding: 10px 16px 10px 16px;
   background: var(--color-bg);
   border-radius: 12px;
   transition: transform 0.2s ease-out;
   position: relative;
   z-index: 1;
+  margin-left: 8px;
 }
 
 .step-item.dragging {
@@ -669,12 +685,12 @@ body {
 }
 
 .step-number {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--color-accent);
   color: white;
-  font-size: 12px;
+  font-size: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -684,7 +700,7 @@ body {
 .step-fields {
   flex: 1;
   display: flex;
-  gap: 10px;
+  gap: 8px;
   overflow: visible;
   min-width: 0;
   align-items: center;
@@ -693,7 +709,8 @@ body {
 
 .step-fields input[type="text"] {
   flex: 1;
-  min-width: 80px;
+  min-width: 60px;
+  max-width: 120px;
 }
 
 .step-fields select {

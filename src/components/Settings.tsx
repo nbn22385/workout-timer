@@ -485,18 +485,24 @@ export function Settings({
                     >
                       Delete
                     </button>
-                  </div>
-                  
-                  {/* Actual step content */}
+                   </div>
+                   
+                  {/* Drag handle area - only on left side */}
                   <div
-                    className="step-item"
-                    style={{ 
-                      transform: `translateX(${swipeStates[index] || 0}px)`,
-                      transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
+                    className="drag-handle-area"
+                    onTouchStart={(e) => {
+                      e.preventDefault();
+                      setDraggedIndex(index);
+                      setTouchStartY(e.touches[0].clientY);
+                      setTouchDragOffset(0);
                     }}
-                    onTouchStart={(e) => handleTouchStart(e, index)}
-                    onTouchMove={handleTouchMove}
-                    onTouchEnd={handleTouchEnd}
+                    onTouchMove={(e) => {
+                      if (draggedIndex === index) {
+                        e.preventDefault();
+                        setTouchDragOffset(e.touches[0].clientY - touchStartY);
+                      }
+                    }}
+                    onTouchEnd={handleDragEnd}
                   >
                     <span
                       className="drag-handle"
@@ -510,23 +516,23 @@ export function Settings({
                       onDragEnter={() => handleDragEnter(index)}
                       onDrop={(e) => handleDrop(e, index)}
                       onDragEnd={handleDragEnd}
-                      onTouchStart={(e) => {
-                        e.stopPropagation();
-                        setDraggedIndex(index);
-                        setTouchStartY(e.touches[0].clientY);
-                        setTouchDragOffset(0);
-                      }}
-                      onTouchMove={(e) => {
-                        e.preventDefault();
-                        if (draggedIndex === index) {
-                          setTouchDragOffset(e.touches[0].clientY - touchStartY);
-                        }
-                      }}
-                      onTouchEnd={handleDragEnd}
                       style={{ transform: draggedIndex === index ? `translateY(${touchDragOffset}px)` : 'none' }}
                     >
                       ⋮⋮
                     </span>
+                  </div>
+
+                  {/* Step content - for swipe */}
+                  <div
+                    className="step-item"
+                    style={{ 
+                      transform: `translateX(${swipeStates[index] || 0}px)`,
+                      transition: activeSwipeIndex === index ? 'none' : 'transform 0.2s ease-out'
+                    }}
+                    onTouchStart={(e) => handleTouchStart(e, index)}
+                    onTouchMove={handleTouchMove}
+                    onTouchEnd={handleTouchEnd}
+                  >
                     <span className="step-number">{index + 1}</span>
                     <div className="step-fields">
                       <input
