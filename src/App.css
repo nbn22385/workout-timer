@@ -633,19 +633,48 @@ body {
   z-index: 0;
 }
 
-/* Drag handle area (left side of card) */
-.drag-handle-area {
+/* Reorder buttons area (left side of card) */
+.reorder-buttons {
   position: absolute;
   top: 0;
-  left: 8px;
+  left: 0;
   bottom: 0;
-  width: 42px;
+  width: 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  z-index: 3;
+  background: transparent;
+  padding-left: 8px;
+}
+
+.reorder-btn {
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3;
-  background: transparent;
-  cursor: grab;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  color: var(--color-text);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.reorder-btn:hover {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+}
+
+.reorder-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
 }
 
 .swipe-delete-btn {
@@ -666,8 +695,8 @@ body {
 .step-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: 6px;
+  padding: 8px 12px 8px 44px;
   background: var(--color-bg);
   border-radius: 12px;
   transition: transform 0.2s ease-out;
@@ -675,15 +704,7 @@ body {
   z-index: 2;
 }
 
-.step-item.dragging {
-  opacity: 0.5;
-  transform: scale(0.98) !important;
-}
 
-.step-item.drag-over {
-  background: var(--color-card);
-  border: 1px dashed var(--color-accent);
-}
 
 .step-number {
   width: 22px;
@@ -701,7 +722,7 @@ body {
 .step-fields {
   flex: 1;
   display: flex;
-  gap: 8px;
+  gap: 6px;
   overflow: visible;
   min-width: 0;
   align-items: center;
@@ -710,8 +731,8 @@ body {
 
 .step-fields input[type="text"] {
   flex: 1;
-  min-width: 60px;
-  max-width: 120px;
+  min-width: 50px;
+  max-width: 90px;
 }
 
 .step-fields select {

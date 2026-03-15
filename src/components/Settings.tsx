@@ -35,10 +35,7 @@ export function Settings({
   );
   const [showPresets, setShowPresets] = useState(false);
   const [newPresetName, setNewPresetName] = useState('');
-  const [draggedIndex, setDraggedIndex] = useState<number | null>(null);
-  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
-  const [touchStartY, setTouchStartY] = useState<number>(0);
-  const [touchDragOffset, setTouchDragOffset] = useState<number>(0);
+
   
   // Swipe to delete state
   const [swipeStates, setSwipeStates] = useState<Record<string, number>>({});
@@ -92,63 +89,27 @@ export function Settings({
     }));
   };
 
-  const handleDragStart = (index: number) => {
-    setDraggedIndex(index);
-  };
-
-  const handleDragOver = (e: React.DragEvent, index: number) => {
-    e.preventDefault();
-    setDragOverIndex(index);
-  };
-
-  const handleDragEnter = (index: number) => {
-    setDragOverIndex(index);
-  };
-
-  const handleDrop = (e: React.DragEvent, dropIndex: number) => {
-    e.preventDefault();
-    if (draggedIndex === null || draggedIndex === dropIndex) {
-      setDraggedIndex(null);
-      setDragOverIndex(null);
-      return;
-    }
-
+  const moveStep = (fromIndex: number, toIndex: number) => {
+    if (toIndex < 0 || toIndex >= customConfig.steps.length) return;
     setCustomConfig((prev) => {
       const newSteps = [...prev.steps];
-      const [removed] = newSteps.splice(draggedIndex, 1);
-      newSteps.splice(dropIndex, 0, removed);
+      const [removed] = newSteps.splice(fromIndex, 1);
+      newSteps.splice(toIndex, 0, removed);
       return { ...prev, steps: newSteps };
     });
-
-    setDraggedIndex(null);
-    setDragOverIndex(null);
   };
 
-  const handleDragEnd = () => {
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-  };
-
-  // Touch event handlers for mobile
+  // Touch event handlers for swipe-to-delete
   const handleTouchStart = (e: React.TouchEvent, index: number) => {
     const touch = e.touches[0];
     const target = e.target as HTMLElement;
     
-    // If touching drag handle, use drag mode
-    if (target.classList.contains('drag-handle')) {
-      e.stopPropagation();
-      setDraggedIndex(index);
-      setTouchStartY(touch.clientY);
-      setTouchDragOffset(0);
-      return;
-    }
-    
     // Don't start swipe if touching input fields, buttons, or toggle
     if (target.closest('.work-rest-toggle') || 
         target.closest('.duration-selector') ||
+        target.closest('.reorder-buttons') ||
         target.closest('input') ||
-        target.closest('button') ||
-        target.classList.contains('drag-handle')) {
+        target.closest('button')) {
       return;
     }
     
@@ -159,29 +120,9 @@ export function Settings({
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
-    const touch = e.touches[0];
-    
-    // Handle drag mode (for drag-and-drop reordering)
-    if (draggedIndex !== null) {
-      e.preventDefault();
-      setTouchDragOffset(touch.clientY - touchStartY);
-      
-      const touchY = touch.clientY;
-      const stepsList = document.querySelector('.steps-list');
-      if (stepsList) {
-        const items = stepsList.querySelectorAll('.step-item');
-        items.forEach((item, index) => {
-          const rect = item.getBoundingClientRect();
-          if (touchY >= rect.top && touchY <= rect.bottom) {
-            setDragOverIndex(index);
-          }
-        });
-      }
-      return;
-    }
-    
     // Handle swipe mode
     if (activeSwipeIndex !== null) {
+      const touch = e.touches[0];
       const deltaX = touch.clientX - swipeStartX;
       if (Math.abs(deltaX) > 10) {
         setIsDragging(true);
@@ -198,16 +139,6 @@ export function Settings({
   };
 
   const handleTouchEnd = () => {
-    // Handle drag-and-drop completion
-    if (draggedIndex !== null && dragOverIndex !== null && draggedIndex !== dragOverIndex) {
-      setCustomConfig((prev) => {
-        const newSteps = [...prev.steps];
-        const [removed] = newSteps.splice(draggedIndex, 1);
-        newSteps.splice(dragOverIndex, 0, removed);
-        return { ...prev, steps: newSteps };
-      });
-    }
-    
     // Handle swipe completion
     if (activeSwipeIndex !== null) {
       const swipeAmount = swipeStates[activeSwipeIndex] || 0;
@@ -224,9 +155,6 @@ export function Settings({
       }
     }
     
-    setDraggedIndex(null);
-    setDragOverIndex(null);
-    setTouchDragOffset(0);
     if (!isDragging) {
       setActiveSwipeIndex(null);
     }
@@ -472,10 +400,10 @@ export function Settings({
               />
             </div>
             <div className="steps-list">
-              {customConfig.steps.map((step, index) => (
+               {customConfig.steps.map((step, index) => (
                 <div
                   key={step.id}
-                  className={`step-swipe-container ${dragOverIndex === index ? 'drag-over' : ''} ${draggedIndex === index ? 'dragging' : ''}`}
+                  className="step-swipe-container"
                 >
                   {/* Delete zone (revealed on swipe) */}
                   <div className="step-delete-zone">
@@ -487,51 +415,24 @@ export function Settings({
                     </button>
                    </div>
                    
-                  {/* Drag handle area - only on left side */}
-                  <div
-                    className="drag-handle-area"
-                    onTouchStart={(e) => {
-                      e.preventDefault();
-                      setDraggedIndex(index);
-                      setTouchStartY(e.touches[0].clientY);
-                      setTouchDragOffset(0);
-                    }}
-                    onTouchMove={(e) => {
-                      if (draggedIndex === index) {
-                        e.preventDefault();
-                        setTouchDragOffset(e.touches[0].clientY - touchStartY);
-                      }
-                    }}
-                    onTouchEnd={handleDragEnd}
-                    onMouseDown={(e) => {
-                      setDraggedIndex(index);
-                      setTouchStartY(e.clientY);
-                      setTouchDragOffset(0);
-                    }}
-                    onMouseMove={(e) => {
-                      if (draggedIndex === index) {
-                        setTouchDragOffset(e.clientY - touchStartY);
-                      }
-                    }}
-                    onMouseUp={handleDragEnd}
-                    onMouseLeave={handleDragEnd}
-                  >
-                    <span
-                      className="drag-handle"
-                      title="Drag to reorder"
-                      draggable
-                      onDragStart={(e) => {
-                        handleDragStart(index);
-                        e.dataTransfer.effectAllowed = 'move';
-                      }}
-                      onDragOver={(e) => handleDragOver(e, index)}
-                      onDragEnter={() => handleDragEnter(index)}
-                      onDrop={(e) => handleDrop(e, index)}
-                      onDragEnd={handleDragEnd}
-                      style={{ transform: draggedIndex === index ? `translateY(${touchDragOffset}px)` : 'none' }}
+                  {/* Reorder buttons on left side */}
+                  <div className="reorder-buttons">
+                    <button
+                      className="reorder-btn"
+                      onClick={() => moveStep(index, index - 1)}
+                      disabled={index === 0}
+                      title="Move up"
                     >
-                      ⋮⋮
-                    </span>
+                      ▲
+                    </button>
+                    <button
+                      className="reorder-btn"
+                      onClick={() => moveStep(index, index + 1)}
+                      disabled={index === customConfig.steps.length - 1}
+                      title="Move down"
+                    >
+                      ▼
+                    </button>
                   </div>
 
                   {/* Step content - for swipe */}
