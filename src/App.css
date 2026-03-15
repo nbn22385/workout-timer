@@ -313,7 +313,47 @@ body {
 /* Settings Presets Section */
 .settings-section {
   border-bottom: 1px solid var(--color-border);
-  padding: 20px 24px;
+  padding: 16px 24px;
+}
+
+.theme-group label {
+  margin-bottom: 0;
+  margin-right: 8px;
+}
+
+.theme-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-row select {
+  flex: 1;
+}
+
+.random-theme-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+}
+
+.random-theme-btn:hover {
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.random-theme-btn:active {
+  background: var(--color-accent);
+  color: white;
 }
 
 .section-header {
@@ -576,14 +616,16 @@ body {
   margin-bottom: 8px;
 }
 
-.form-group.inline {
+.form-group.inline,
+.form-group.theme-group {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
 }
 
-.form-group.inline label {
+.form-group.inline label,
+.form-group.theme-group label {
   margin-bottom: 0;
   flex-shrink: 0;
 }
@@ -664,6 +706,8 @@ body {
   cursor: pointer;
   padding: 0;
   flex-shrink: 0;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .reorder-btn:hover {
@@ -672,9 +716,17 @@ body {
   border-color: var(--color-accent);
 }
 
+.reorder-btn:active {
+  background: var(--color-accent);
+  color: white;
+  border-color: var(--color-accent);
+  outline: none;
+}
+
 .reorder-btn:disabled {
   opacity: 0.3;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .swipe-delete-btn {

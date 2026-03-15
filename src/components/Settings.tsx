@@ -210,18 +210,31 @@ export function Settings({
         {/* Theme Selector */}
         <div className="settings-section">
           <div className="settings-form">
-            <div className="form-group">
+            <div className="form-group theme-group">
               <label>Theme</label>
-              <select
-                value={settings.theme}
-                onChange={(e) => onSettingsChange({ theme: e.target.value as ThemeId })}
-              >
-                {THEMES.map((theme) => (
-                  <option key={theme.id} value={theme.id}>
-                    {theme.name}
-                  </option>
-                ))}
-              </select>
+              <div className="theme-row">
+                <select
+                  value={settings.theme}
+                  onChange={(e) => onSettingsChange({ theme: e.target.value as ThemeId })}
+                >
+                  {THEMES.map((theme) => (
+                    <option key={theme.id} value={theme.id}>
+                      {theme.name}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  className="random-theme-btn"
+                  onClick={() => {
+                    const randomIndex = Math.floor(Math.random() * THEMES.length);
+                    const randomTheme = THEMES[randomIndex];
+                    onSettingsChange({ theme: randomTheme.id });
+                  }}
+                  title="Random theme"
+                >
+                  <Icon name="wand" size={16} />
+                </button>
+              </div>
             </div>
           </div>
         </div>
