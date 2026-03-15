@@ -414,7 +414,37 @@ export function Settings({
                   key={step.id}
                   className="step-swipe-container"
                 >
-                  {/* Step item - for swipe */}
+                  {/* Delete zone (revealed on swipe) */}
+                  <div className="step-delete-zone">
+                    <button 
+                      className="swipe-delete-btn"
+                      onClick={() => handleSwipeDelete(index)}
+                    >
+                      Delete
+                    </button>
+                   </div>
+                   
+                  {/* Reorder buttons on left side */}
+                  <div className="reorder-buttons">
+                    <button
+                      className="reorder-btn"
+                      onClick={() => moveStep(index, index - 1)}
+                      disabled={index === 0}
+                      title="Move up"
+                    >
+                      ▲
+                    </button>
+                    <button
+                      className="reorder-btn"
+                      onClick={() => moveStep(index, index + 1)}
+                      disabled={index === customConfig.steps.length - 1}
+                      title="Move down"
+                    >
+                      ▼
+                    </button>
+                  </div>
+
+                  {/* Step content - for swipe */}
                   <div
                     className="step-item"
                     style={{ 
@@ -425,35 +455,6 @@ export function Settings({
                     onTouchMove={handleTouchMove}
                     onTouchEnd={handleTouchEnd}
                   >
-                    {/* Reorder buttons (absolute, left side) */}
-                    <div className="reorder-buttons">
-                      <button
-                        className="reorder-btn"
-                        onClick={() => moveStep(index, index - 1)}
-                        disabled={index === 0}
-                        title="Move up"
-                      >
-                        ▲
-                      </button>
-                      <button
-                        className="reorder-btn"
-                        onClick={() => moveStep(index, index + 1)}
-                        disabled={index === customConfig.steps.length - 1}
-                        title="Move down"
-                      >
-                        ▼
-                      </button>
-                    </div>
-
-                    {/* Delete zone (revealed on swipe) */}
-                    <div className="step-delete-zone">
-                      <button 
-                        className="swipe-delete-btn"
-                        onClick={() => handleSwipeDelete(index)}
-                      >
-                        Delete
-                      </button>
-                    </div>
                     <div className="step-fields">
                       <input
                         type="text"
